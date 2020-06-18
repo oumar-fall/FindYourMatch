@@ -2,6 +2,7 @@ const canvas = document.getElementById('canvas');
 
 const h = parseFloat(getComputedStyle(canvas).height);
 const w = parseFloat(getComputedStyle(canvas).width);
+const modal = document.getElementById("modal");
 let x, y, zoomState;
 let dataset = [];
 
@@ -51,7 +52,8 @@ function draw() {
                 .attr("cx", (d) => x(d.age_o))
                 .attr("cy", (d) => y(d.income))
                 .attr("fill", "red")
-                .on("mouseover", onMouseOver);
+                .attr("class", "data-entry")
+                .on("click", showModal);
 
     zoomed(g)
     zoom = d3.zoom()
@@ -99,6 +101,6 @@ function zoomed(g){
     }
 }
 
-function onMouseOver(d, i){
-    
+function showModal(d, i){
+    modal.style.display = "flex";
 }
