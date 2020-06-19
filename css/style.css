@@ -4,3 +4,10 @@
     height:700px;
     background-color: black;
 }
+
+#title {
+  font-family: GeoSansLight, sans-serif;
+  text-align: center;
+  font-size: 50px;
+  color: white;
+}

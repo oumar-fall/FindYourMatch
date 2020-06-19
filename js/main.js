@@ -12,33 +12,36 @@ let svg = d3.select("#canvas")
                 .attr("viewBox", [0, 0, w,  h])
                 .attr("class", "mainSvg")
 
-                var xAxis, yAxis, gX, gY;
+var xAxis, yAxis, gX, gY;
 
 
-                d3.csv("data/SpeedDating.csv")
-                    .row( (d, i) => {
-                        d.income = d.income.replace(',', '');
-                        d.zipcode = d.zipcode.replace(',', '');
-                        return d;
-                    })
-                    .get( (err, rows) => {
-                        console.log("Loaded " + rows.length + " rows");
-                        if (rows.length > 0) {
-                            console.log("First row: ");
-                            console.log(rows[0]);
-                            console.log("Last row: ");
-                            console.log(rows[rows.length-1]);
-                        }
-                        dataset = rows;
-                        x = d3.scaleLinear()
-                            .domain(d3.extent(rows, (row) => row.age_o))
-                            .range([0, w]);
-                        y = d3.scaleLinear()
-                            .domain(d3.extent(rows, (row) => row.income))
-                            .range([0, h]);
-                
-                        draw();
-                    });
+d3.csv("data/SpeedDating.csv")
+    .row( (d, i) => {
+        d.income = d.income.replace(',', '');
+        d.zipcode = d.zipcode.replace(',', '');
+        d.wave = d.wave.replace(',', '');
+        d.age = d.age.replace(',', '');
+        
+        return d;
+    })
+    .get( (err, rows) => {
+        console.log("Loaded " + rows.length + " rows");
+        if (rows.length > 0) {
+            console.log("First row: ");
+            console.log(rows[0]);
+            console.log("Last row: ");
+            console.log(rows[rows.length-1]);
+        }
+        dataset = rows;
+        x = d3.scaleLinear()
+            .domain(d3.extent(rows, (row) => row.age_o))
+            .range([0, w]);
+        y = d3.scaleLinear()
+            .domain(d3.extent(rows, (row) => row.income))
+            .range([0, h]);
+
+        draw();
+    });
 
 
 function draw() {
@@ -93,12 +96,22 @@ function zoomed(g){
     }
     if (zoomState){
         g.attr("transform", zoomState);
-    
+
         gX.call(xAxis.scale(zoomState.rescaleX(x)));
         gY.call(yAxis.scale(zoomState.rescaleY(y)));
     }
 }
 
+function drawCluster(){}
+
 function onMouseOver(d, i){
-    
+
+}
+
+function noCluster(){
+  draw();
+}
+
+function Cluster(){
+  drawCluster();
 }

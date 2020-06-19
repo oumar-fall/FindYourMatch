@@ -2,12 +2,23 @@
 <html lang='fr'>
 <head>
     <meta charset='UTF-8'>
+      <title>Speed Datin</title>
     <link rel='stylesheet' href='css/style.css'>
     <title>Find Your Match</title>
 </head>
 <body>
     <main>
         <section id="canvas"></section>
+
+        <br>
+
+        <div>
+          <p>Deux visualisations sont disponibles : organisée par soirées de rencontre ou sans soirées de rencontre.</p>
+          <p> Attention, l'actualisation de la page peut prendre un certain temps.</p>
+    			<button id = "noCluster" onclick="NoCluster">Sans soirées</button>
+    			<button id= "cluster" onclick="Cluster">Soirées</button>
+    		</div>
+
     </main>
     <footer>
         <script type="text/javascript" src='js/d3/d3.js'></script>
