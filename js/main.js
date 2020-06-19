@@ -20,8 +20,6 @@ d3.csv("data/SpeedDating.csv")
     .row( (d, i) => {
         d.income = d.income.replace(',', '');
         d.zipcode = d.zipcode.replace(',', '');
-        d.wave = d.wave.replace(',', '');
-        d.age = d.age.replace(',', '');
 
         return d;
     })
@@ -35,7 +33,7 @@ d3.csv("data/SpeedDating.csv")
         }
         dataset = rows;
         x = d3.scaleLinear()
-            .domain(d3.extent(rows, (row) => row.age_o))
+            .domain(d3.extent(rows, (row) => row.age))
             .range([0, w]);
         y = d3.scaleLinear()
             .domain(d3.extent(rows, (row) => row.income))
@@ -52,7 +50,7 @@ function draw() {
                 .data(dataset)
             .enter().append("circle")
                 .attr("r", 1)
-                .attr("cx", (d) => x(d.age_o))
+                .attr("cx", (d) => x(d.age))
                 .attr("cy", (d) => y(d.income))
                 .attr("fill", "red")
                 .attr("class", "data-entry")
@@ -105,10 +103,39 @@ function zoomed(g){
 }
 
 
-function drawCluster(){}
+function drawCluster(){
+  svg.selectAll("*").remove();
+  var g = svg.append('g');
+  g.selectAll("circle")
+              .data(dataset)
+              .enter().append("circle")
+              .attr("r", 2)
+              .attr("cx", (d) => w/23*d.wave + compute_cluster_x(2*Math.PI*d.idg/(d.round*2), (d.age-10)*3))
+              .attr("cy", (d) => h/3*(1+(d.wave % 2)) + compute_cluster_y(2*Math.PI*d.idg/(d.round*2), (d.age-10)*3))
+              .attr("fill", (d) => color(d.gender))
+              .attr("class", "data-entry")
+              .on("click", showModal);
+}
 
 function onMouseOver(d, i){
 
+}
+
+function compute_cluster_y(angle, module){
+  return(module*Math.cos(angle));
+}
+
+function compute_cluster_x(angle, module){
+  return(module*Math.sin(angle));
+}
+
+function color(int){
+  switch(int){
+		case "1":
+			return("rgb(245,166,241)");
+		case "0":
+			return("rgb(83,80,242)");
+    }
 }
 
 function noCluster(){
@@ -116,6 +143,7 @@ function noCluster(){
 }
 
 function Cluster(){
+  console.log("cluster !");
   drawCluster();
 }
 
