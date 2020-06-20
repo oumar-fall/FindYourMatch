@@ -15,6 +15,26 @@ const races = [
 	"Native American",
 	"Other"
 ]
+const field = [
+    "Law"  ,
+    "Math",
+    "Social Science, Psychologist" ,
+    "Medical Science, Pharmaceuticals, and Bio Tech",
+    "Engineering"  ,
+    "English/Creative Writing/ Journalism" ,
+    "History/Religion/Philosophy" ,
+    "Business/Econ/Finance" ,
+    "Education, Academia" ,
+    "Biological Sciences/Chemistry/Physics",
+    "Social Work" ,
+    "Undergrad/undecided" ,
+    "Political Science/International Affairs" ,
+    "Film",
+    "Fine Arts/Arts Administration",
+    "Languages",
+    "Architecture",
+    "Other"
+]
 
 let svg = d3.select("#canvas")
             .append("svg")
@@ -60,7 +80,7 @@ function draw() {
     svg.selectAll("*").remove();
     var g = svg.append('g');
     g.selectAll("circle")
-                .data(dataset)
+                .data(user_dataset)
             .enter().append("circle")
                 .attr("r", 1)
                 .attr("cx", (d) => x(d.age))
@@ -120,7 +140,7 @@ function drawCluster(){
   svg.selectAll("*").remove();
   var g = svg.append('g');
   g.selectAll("circle")
-              .data(dataset)
+              .data(user_dataset)
               .enter().append("circle")
               .attr("r", 2)
               .attr("cx", (d) => w/23*d.wave + compute_cluster_x(2*Math.PI*d.idg/(d.round*2), (d.age-10)*3))
@@ -295,7 +315,7 @@ function addModalInfos(d) {
     document.getElementById("modal-infos-age").innerHTML = "<strong>Age : </strong><em>" + d.age + "</em>";
     document.getElementById("modal-infos-from").innerHTML = "<strong>From : </strong><em>" + d.from + "</em>";
     document.getElementById("modal-infos-race").innerHTML = "<strong>Race : </strong><em>" + races[d.race-1] + "</em>";
-    document.getElementById("modal-infos-field").innerHTML = "<strong>Field of studies : </strong><em>" + d.field + "</em>";
+    document.getElementById("modal-infos-field").innerHTML = "<strong>Field of studies : </strong><em>" + field[d.field_cd-1] + "</em>";
     document.getElementById("modal-infos-undergraduate").innerHTML = "<strong>Undergraduate School : </strong><em>" + d.undergra + "</em>";
     document.getElementById("modal-infos-income").innerHTML = "<strong>Income : </strong><em>" + d.income + "</em>";
     document.getElementById("modal-infos-img").src = "media/" + ((d.gender==1)? "man" : "woman") + ".svg";
