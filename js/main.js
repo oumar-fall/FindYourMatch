@@ -230,14 +230,8 @@ function draw() {
                 .data(user_dataset)
             .enter().append("circle")
                 .attr("r", 1)
-<<<<<<< HEAD
                 .attr("cx", (d) => xA(d[valeurmodeA]))
                 .attr("cy", (d) => yO(d[valeurmodeO]))
-                .attr("fill", "red")
-=======
-                .attr("cx", (d) => x(d.age))
-                .attr("cy", (d) => y(d.income))
->>>>>>> acc57f04ed2cae6b0092b9f6a8be0704bbf803d4
                 .attr("fill", (d) => color(d.gender))
                 .attr("class", "data-entry")
                 .on("click", (d) => showModal(d));
