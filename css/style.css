@@ -73,3 +73,7 @@
     cursor: pointer;
     background-color: darkred;
 }
+
+path.plot {
+  stroke: #FFA319;
+}
