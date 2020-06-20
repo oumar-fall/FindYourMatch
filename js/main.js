@@ -89,7 +89,7 @@ function draw() {
                 .attr("r", 1)
                 .attr("cx", (d) => x(d.age))
                 .attr("cy", (d) => y(d.income))
-                .attr("fill", "red")
+                .attr("fill", (d) => color(d.gender))
                 .attr("class", "data-entry")
                 .on("click", (d) => showModal(d));
 
@@ -144,7 +144,7 @@ function drawCluster(){
   svg.selectAll("*").remove();
 
   var g = svg.append('g');
-  var relationships = createRelationships();
+  var relationships = createRelationships(dataset);
   g.selectAll("circle")
               .data(user_dataset)
               .enter().append("circle")
@@ -154,7 +154,7 @@ function drawCluster(){
               .attr("fill", (d) => color(d.gender))
               .attr("class", "data-entry")
               .on("click", showModal)
-              .on("mouseover",function(d){textarea.innerHTML =d.age + ", " + d.field + ", " + d.income + " position " + compute_cluster_x(d) + " " + compute_cluster_y(d)});
+              .on("mouseover",function(d){textarea.innerHTML =d.age + ", " + d.field + ", " + d.income });
   var line = d3.line()
   .x(function (d) { return d.x; })
   .y(function (d) { return d.y; });
@@ -177,18 +177,18 @@ function match(d){
   }
 }
 
-function createRelationships(){
+function createRelationships(data){
   var r = [];
-  for (let i = 0; i < dataset.length; i++){
-    var d = dataset[i];
+  for (let i = 0; i < data.length; i++){
+    var d = data[i];
     var id = match(d);
     if (id){
       var rel_i = i;
-      while ((rel_i < dataset.length-1) && (d.wave == dataset[rel_i].wave) && (id != dataset[rel_i].iid)){
+      while ((rel_i < data.length-1) && (d.wave == data[rel_i].wave) && (id != data[rel_i].iid)){
         rel_i = rel_i + 1;
       }
-      if(id == dataset[rel_i].iid){
-        var rel = dataset[rel_i];
+      if(id == data[rel_i].iid){
+        var rel = data[rel_i];
         var relation = [{"x":compute_cluster_x(d), "y":compute_cluster_y(d)}, {"x":compute_cluster_x(rel), "y":compute_cluster_y(rel)}];
         r.push(relation);
       }
