@@ -60,9 +60,10 @@
     margin-bottom: 10px;
 }
 
-#modal-graphic {
-    height : 40%;
-    min-height: 150px;
+.line {
+    fill: none;
+    stroke: #ffab00;
+    stroke-width: 3;
 }
 
 #modal-close {
@@ -186,6 +187,17 @@
     line-height: 1em;
 }
 
+#modal-graphic {
+    height : 40%;
+    min-height: 150px;
+}
+
+#modal-graphic-svg {
+    width: 100%;
+    height: 100%;
+
+    background-color: turquoise;
+}
 
 input[type="range"] {
     position: relative;

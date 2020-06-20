@@ -230,9 +230,14 @@ function draw() {
                 .data(user_dataset)
             .enter().append("circle")
                 .attr("r", 1)
+<<<<<<< HEAD
                 .attr("cx", (d) => xA(d[valeurmodeA]))
                 .attr("cy", (d) => yO(d[valeurmodeO]))
                 .attr("fill", "red")
+=======
+                .attr("cx", (d) => x(d.age))
+                .attr("cy", (d) => y(d.income))
+>>>>>>> acc57f04ed2cae6b0092b9f6a8be0704bbf803d4
                 .attr("fill", (d) => color(d.gender))
                 .attr("class", "data-entry")
                 .on("click", (d) => showModal(d));
@@ -309,7 +314,7 @@ function drawCluster(){
   svg.selectAll("*").remove();
 
   var g = svg.append('g');
-  var relationships = createRelationships();
+  var relationships = createRelationships(dataset, user_dataset);
   g.selectAll("circle")
               .data(user_dataset)
               .enter().append("circle")
@@ -319,7 +324,7 @@ function drawCluster(){
               .attr("fill", (d) => color(d.gender))
               .attr("class", "data-entry")
               .on("click", showModal)
-              .on("mouseover",function(d){textarea.innerHTML =d.age + ", " + d.field + ", " + d.income + " position " + compute_cluster_x(d) + " " + compute_cluster_y(d)});
+              .on("mouseover",function(d){textarea.innerHTML =d.age + ", " + d.field + ", " + d.income });
   var line = d3.line()
   .x(function (d) { return d.x; })
   .y(function (d) { return d.y; });
@@ -342,19 +347,26 @@ function match(d){
   }
 }
 
-function createRelationships(){
+function createRelationships(data_from, data_to){
+  // data_from : data from where we are looking
+  //data_to : data where we look for the matches
   var r = [];
-  for (let i = 0; i < dataset.length; i++){
-    var d = dataset[i];
-    var id = match(d);
-    if (id){
-      var rel_i = i;
-      while ((rel_i < dataset.length-1) && (d.wave == dataset[rel_i].wave) && (id != dataset[rel_i].iid)){
-        rel_i = rel_i + 1;
+  for (let i = 0; i < data_from.length; i++){
+
+    var d = data_from[i];
+
+    var match_iid = match(d);
+
+    if (match_iid){ //if there is a match
+
+      var match_id = 0; //let's find the match in data_to
+
+      while ((match_id < data_to.length-1) && (match_iid != data_to[match_id].iid)){
+        match_id = match_id + 1;
       }
-      if(id == dataset[rel_i].iid){
-        var rel = dataset[rel_i];
-        var relation = [{"x":compute_cluster_x(d), "y":compute_cluster_y(d)}, {"x":compute_cluster_x(rel), "y":compute_cluster_y(rel)}];
+      if(match_iid == data_to[match_id].iid && (d.wave == data_to[match_id].wave)){
+        var _match = data_to[match_id];
+        var relation = [{"x":compute_cluster_x(d), "y":compute_cluster_y(d)}, {"x":compute_cluster_x(_match), "y":compute_cluster_y(_match)}];
         r.push(relation);
       }
     }
@@ -389,7 +401,11 @@ function drawFilter(){
     p.innerHTML = "Do you want to find the right type of person for you? Enter your (approximate) characteristics and we'll show you who people who look like you have matched up with. People who look like you are indicated with larger circles. Click on their profile to see who they have matched up with and therefore which profiles may match you.";
     divtext.appendChild(p);
     var div = document.createElement(div);
+<<<<<<< HEAD
     div.innerHTML = "Describe yourself : <div> <input type='range' list='tickmarks'id='age' name='age' min='18' max='55' oninput = 'ageMax(age.value)'> <label for='volume'>Age Max </label> <br> <br> </div> <div><input type='range' id='agem' name='agem' list='tickmarks2' min='18' max='55'  oninput = 'ageMin(agem.value)'> <label for='cowbell'>Age Min </label> <br> <br> </div> Sexe : <div><input type='radio' id='F' name='sexe' value='F' onclick='sexe(F.value)' checked><label for='F'> F</label></div> <div><input type='radio' id='M' name='sexe' value='M' onclick='sexe(M.value)'> <label for='M'>M</label></div> <br> <br> Race :<div><input type='radio' id='race1' name='race' value='1' onclick='race(race1.value)'checked><label for='race1'> Black/African American </label></div> <div><input type='radio' id='race2' name='race' value='2' onclick='race(race2.value)'><label for='race2'> European/Caucasian-American </label></div> <div><input type='radio' id='race3' name='race' value='3' onclick='race(race3.value)'checked ><label for='race3'> Latino/Hispanic American </label></div> <div><input type='radio' id='race4' name='race' value='4' onclick='race(race4.value)'checked><label for='race4'> Asian/Pacific Islander/Asian-American </label></div>  <div><input type='radio' id='race5' name='race' value='5'checked onclick='race(race5.value)'><label for='race5'> Native American </label></div>  <div><input type='radio' id='race6' name='race' value='6' onclick='race(race6.value)'checked><label for='race6'> Other </label></div> <div><input type='radio' id='race7' name='race' value='7' onclick='race(race7.value)'checked><label for='race7'> All </label></div> <br> <br> Field of Study :<div><input type='radio' id='study1' name='study' value='1' onclick='study(study1.value)'checked><label for='study1'> Law </label></div> <div><input type='radio' id='study2' name='study' value='2' onclick='study(study2.value)'><label for='study'> Math </label></div> <div><input type='radio' id='study3' name='study' value='3' onclick=study(study3.value)'checked ><label for='study3'> Social Science, Psycologist </label></div> <div><input type='radio' id='study4' name='study' value='4' onclick='study(study.value)'checked><label for='study4'> Medical science, Pharmaceuticals, and Bio Tech </label></div>  <div><input type='radio' id='study5' name='study' value='5'checked onclick='study(study5.value)'><label for='study5'> Engineering </label></div>  <div><input type='radio' id='study6' name='study' value='6' onclick='study(study6.value)'checked><label for='study6'> English/Creative Writing/Philosophy </label></div><div><input type='radio' id='study7' name='study' value='7' onclick='study(study7.value)'checked><label for='study7'> History/Religion/Philosophy </label></div> <div><input type='radio' id='study8' name='study' value='8' onclick='study(study8.value)'checked><label for='study8'> Business/Econ/Finance </label></div> <div><input type='radio' id='study9' name='study' value='9' onclick='study(study9.value)'checked><label for='study9'> Education, Academia </label></div> <div><input type='radio' id='study10' name='study' value='10' onclick='study(study10.value)'checked><label for='study10'> Biological siences/Chemistry/Physics </label></div> <div><input type='radio' id='study11' name='study' value='11' onclick='study(study11.value)'checked><label for='study11'> Social work </label></div> <div><input type='radio' id='study12' name='study' value='12' onclick='study(study12.value)'checked><label for='study12'> Undergrad/undecided </label></div>  <div><input type='radio' id='study13' name='study' value='13' onclick='study(study13.value)'checked><label for='study13'> Political science/International affairs </label></div> <div><input type='radio' id='study14' name='study' value='14' onclick='study(study14.value)'checked><label for='study14'>Film </label></div> <div><input type='radio' id='study15' name='study' value='15' onclick='study(study15.value)'checked><label for='study15'> Fine Arts/ Arts Adiministration </label></div> <div><input type='radio' id='study16' name='study' value='16' onclick='study(study16.value)'checked><label for='study16'> Languages </label></div> <div><input type='radio' id='study17' name='study' value='17' onclick='study(study17.value)'checked><label for='study17'> Architecture </label></div> <div><input type='radio' id='study18' name='study' value='18' onclick='study(study18.value)'checked><label for='study18'> Other </label></div> <div><input type='radio' id='study19' name='study' value='19' onclick='study(study19.value)'checked><label for='study19'> Show all </label></div> ";
+=======
+    div.innerHTML = "Décrivez vous : <div> <input type='range' value=55 list='tickmarks'id='age' name='age' min='18' max='55' oninput = 'ageMax(age.value);document.getElementById(\"agem\").max = age.value;'> <label for='volume'>Age Max </label> <br> <br> </div> <div><input type='range' id='agem' name='agem' value=18 list='tickmarks2' min='18' max='55'  oninput = 'ageMin(agem.value);document.getElementById(\"age\").min = agem.value;'> <label for='cowbell'>Age Min </label> <br> <br> </div> Sexe : <div><input type='radio' id='F' name='sexe' value='F' onclick='sexe(F.value)' checked><label for='F'> F</label></div> <div><input type='radio' id='M' name='sexe' value='M' onclick='sexe(M.value)'> <label for='M'>M</label></div> <br> <br> Race :<div><input type='radio' id='race1' name='race' value='1' onclick='race(race1.value)'checked><label for='race1'> Black/African American </label></div> <div><input type='radio' id='race2' name='race' value='2' onclick='race(race2.value)'><label for='race2'> European/Caucasian-American </label></div> <div><input type='radio' id='race3' name='race' value='3' onclick='race(race3.value)'checked ><label for='race3'> Latino/Hispanic American </label></div> <div><input type='radio' id='race4' name='race' value='4' onclick='race(race4.value)'checked><label for='race4'> Asian/Pacific Islander/Asian-American </label></div>  <div><input type='radio' id='race5' name='race' value='5'checked onclick='race(race5.value)'><label for='race5'> Native American </label></div>  <div><input type='radio' id='race6' name='race' value='6' onclick='race(race6.value)'checked><label for='race6'> Other </label></div> <div><input type='radio' id='race7' name='race' value='7' onclick='race(race7.value)'checked><label for='race7'> All </label></div> <br> <br> Field of Study :<div><input type='radio' id='study1' name='study' value='1' onclick='study(study1.value)'checked><label for='study1'> Law </label></div> <div><input type='radio' id='study2' name='study' value='2' onclick='study(study2.value)'><label for='study'> Math </label></div> <div><input type='radio' id='study3' name='study' value='3' onclick=study(study3.value)'checked ><label for='study3'> Social Science, Psycologist </label></div> <div><input type='radio' id='study4' name='study' value='4' onclick='study(study.value)'checked><label for='study4'> Medical science, Pharmaceuticals, and Bio Tech </label></div>  <div><input type='radio' id='study5' name='study' value='5'checked onclick='study(study5.value)'><label for='study5'> Engineering </label></div>  <div><input type='radio' id='study6' name='study' value='6' onclick='study(study6.value)'checked><label for='study6'> English/Creative Writing/Philosophy </label></div><div><input type='radio' id='study7' name='study' value='7' onclick='study(study7.value)'checked><label for='study7'> History/Religion/Philosophy </label></div> <div><input type='radio' id='study8' name='study' value='8' onclick='study(study8.value)'checked><label for='study8'> Business/Econ/Finance </label></div> <div><input type='radio' id='study9' name='study' value='9' onclick='study(study9.value)'checked><label for='study9'> Education, Academia </label></div> <div><input type='radio' id='study10' name='study' value='10' onclick='study(study10.value)'checked><label for='study10'> Biological siences/Chemistry/Physics </label></div> <div><input type='radio' id='study11' name='study' value='11' onclick='study(study11.value)'checked><label for='study11'> Social work </label></div> <div><input type='radio' id='study12' name='study' value='12' onclick='study(study12.value)'checked><label for='study12'> Undergrad/undecided </label></div>  <div><input type='radio' id='study13' name='study' value='13' onclick='study(study13.value)'checked><label for='study13'> Political science/International affairs </label></div> <div><input type='radio' id='study14' name='study' value='14' onclick='study(study14.value)'checked><label for='study14'>Film </label></div> <div><input type='radio' id='study15' name='study' value='15' onclick='study(study15.value)'checked><label for='study15'> Fine Arts/ Arts Adiministration </label></div> <div><input type='radio' id='study16' name='study' value='16' onclick='study(study16.value)'checked><label for='study16'> Languages </label></div> <div><input type='radio' id='study17' name='study' value='17' onclick='study(study17.value)'checked><label for='study17'> Architecture </label></div> <div><input type='radio' id='study18' name='study' value='18' onclick='study(study18.value)'checked><label for='study18'> Other </label></div> <div><input type='radio' id='study19' name='study' value='19' onclick='study(study19.value)'checked><label for='study19'> Show all </label></div> ";
+>>>>>>> acc57f04ed2cae6b0092b9f6a8be0704bbf803d4
     divtext.appendChild(div);
 
 }
@@ -424,7 +440,7 @@ function afficherFilter(){
     var g = svg.append('g');
     var relationships = createRelationships();
     g.selectAll("circle")
-                .data(dataset)
+                .data(user_dataset)
                 .enter().append("circle")
                 .attr("r", (d) => rayon(d.age,d.race,d.gender,d.field_cd))
                 .attr("cx", (d) => compute_cluster_x(d))
@@ -520,6 +536,8 @@ function showModal(d){
             addModalNoMatchItem(item);
         }
     }
+
+    addModalGraph(d);
 }
 function closeModal() {
     modal.innerHTML = '<div class="modal-container"><div id="modal-close" onclick="closeModal()">X</div><div class="modal-content" id="modal-infos"><span class="modal-title" id="modal-infos-id"></span><div class="modal-content" id="modal-infos-details"><img id="modal-infos-img" src="media/man.svg" alt=""><div class="modal-content modal-content-2" id="modal-infos-details-text"><span class="modal-infos-details-span" id="modal-infos-age"></span><span class="modal-infos-details-span" id="modal-infos-from"></span><span class="modal-infos-details-span" id="modal-infos-race"></span><span class="modal-infos-details-span" id="modal-infos-field"></span><span class="modal-infos-details-span" id="modal-infos-income"></span><span class="modal-infos-details-span" id="modal-infos-undergraduate"></span></div></div></div><div class="modal-content" id="modal-matchs"><div class="modal-content modal-content-2" id="modal-match"><span class="modal-title" id="modal-match-title">Match</span> </div><div class="modal-content modal-content-2" id="modal-nomatch"><span class="modal-title" id="modal-nomatch-title">No Match</span></div></div><div class="modal-content" id="modal-graphic"></div></div>'
@@ -629,4 +647,91 @@ function study(nom){
 
    afficherFilter();
 }
+<<<<<<< HEAD
  
+=======
+
+function addModalGraph(l){
+    var modalGraphic = document.getElementById("modal-graphic");
+    var modalSvg = document.createElement("svg");
+    modalSvg.id = "modal-graphic-svg";
+    modalGraphic.appendChild(modalSvg);
+
+    var modal_w = parseFloat(window.getComputedStyle(modalSvg).width);
+    var modal_h = parseFloat(window.getComputedStyle(modalSvg).height);
+    var modalSvg = d3.select('#modal-graphic-svg')
+                        .attr("width", modal_w)
+                        .attr("height", modal_h)
+                        .attr("viewBox", [0, 0, modal_w, modal_h]);
+
+    var before = {
+        time:1,
+        mark:l.attr1_1
+    };
+
+    var during = {
+        time:2,
+        mark:l.attr1_ss
+    }
+
+    var oneday_after = {
+        time:3,
+        mark:l.attr7_2
+    }
+
+    var threeweeks_after = {
+        time:4,
+        mark:l.attr1_3
+    }
+
+    object = [before, during, oneday_after, threeweeks_after];
+    const noms = ["","avant", "pendant", "un jour après", "trois semaines après"];
+
+    y = d3.scaleLinear()
+        .domain([0,100])
+        .range([0, modal_h]);
+    x = d3.scaleOrdinal()
+        .domain([0,1,2,3,4])
+        .range([0,modal_w/4,modal_w/2,3*modal_w/4, modal_w]);
+        
+    modalSvg.selectAll("circle")
+        .data(object)
+        .enter()
+        .append("circle")
+        .attr("class","dots")
+        .attr("cx", (d)=>x(d.time))
+        .attr("cy", (d)=>y(d.mark))
+        .attr("r", 2)
+        .attr("transform", "translate(30,10)");
+
+    xAxis = d3.axisBottom(x)
+        .tickFormat((t)=>{return noms[t];})
+        .tickSize(10)
+        .tickPadding(5);
+
+    yAxis = d3.axisRight(y)
+            .ticks(10)
+            .tickSize(10)
+            .tickPadding(5);
+
+    modalSvg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(30,10)")
+        .call(d3.axisBottom(x));
+
+    modalSvg.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(30,10)")
+        .call(d3.axisLeft(y));
+
+    const line = d3.line()
+        .x(function(d) { return x(d.time); })
+        .y(function(d) { return y(d.mark); });
+
+    modalSvg.append("path")
+        .datum(object) // 10. Binds data to the line 
+        .attr("class", "line") // Assign a class for styling 
+        .attr("d", line)
+        .attr("transform", "translate(30,10)");
+}
+>>>>>>> acc57f04ed2cae6b0092b9f6a8be0704bbf803d4
