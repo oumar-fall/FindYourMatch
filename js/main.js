@@ -432,7 +432,7 @@ function rayon(age,race, genre, study){
 function afficherFilter(){
     svg.selectAll("*").remove();
     var g = svg.append('g');
-    var relationships = createRelationships();
+    var relationships = createRelationships(dataset, user_dataset);
     g.selectAll("circle")
                 .data(user_dataset)
                 .enter().append("circle")
@@ -475,6 +475,7 @@ function NoCluster(){
        myNode.removeChild(myNode.firstChild);
 }
 
+
 var divtext = document.getElementById("textdiv");
 var divgrosse = document.createElement("grossediv");
 var div1 = document.createElement("div");
@@ -502,6 +503,10 @@ function Cluster(){
  while (myNode.firstChild) {
        myNode.removeChild(myNode.firstChild);
 }
+var studyexpl = document.getElementById("studyexpl");
+studyexpl.innerHTML = "";
+var raceexpl = document.getElementById("raceexpl");
+raceexpl.innerHTML = "";
   drawCluster();
 }
 
@@ -599,6 +604,10 @@ function Filter(){
  while (myNode.firstChild) {
        myNode.removeChild(myNode.firstChild);
 }
+    var studyexpl = document.getElementById("studyexpl");
+    studyexpl.innerHTML = "";
+    var raceexpl = document.getElementById("raceexpl");
+    raceexpl.innerHTML = "";
 
 
 
