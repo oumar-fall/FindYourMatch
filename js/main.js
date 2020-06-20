@@ -455,7 +455,7 @@ function addModalGraph(l){
 
     var during = {
         time:2,
-        mark:l.attr1_s
+        mark:l.attr1_ss
     }
 
     var oneday_after = {
