@@ -89,7 +89,7 @@ function draw() {
                 .attr("r", 1)
                 .attr("cx", (d) => x(d.age))
                 .attr("cy", (d) => y(d.income))
-                .attr("fill", "red")
+                .attr("fill", (d) => color(d.gender))
                 .attr("class", "data-entry")
                 .on("click", (d) => showModal(d));
 
@@ -144,7 +144,7 @@ function drawCluster(){
   svg.selectAll("*").remove();
 
   var g = svg.append('g');
-  var relationships = createRelationships();
+  var relationships = createRelationships(dataset, user_dataset);
   g.selectAll("circle")
               .data(user_dataset)
               .enter().append("circle")
@@ -154,7 +154,7 @@ function drawCluster(){
               .attr("fill", (d) => color(d.gender))
               .attr("class", "data-entry")
               .on("click", showModal)
-              .on("mouseover",function(d){textarea.innerHTML =d.age + ", " + d.field + ", " + d.income + " position " + compute_cluster_x(d) + " " + compute_cluster_y(d)});
+              .on("mouseover",function(d){textarea.innerHTML =d.age + ", " + d.field + ", " + d.income });
   var line = d3.line()
   .x(function (d) { return d.x; })
   .y(function (d) { return d.y; });
@@ -177,19 +177,26 @@ function match(d){
   }
 }
 
-function createRelationships(){
+function createRelationships(data_from, data_to){
+  // data_from : data from where we are looking
+  //data_to : data where we look for the matches
   var r = [];
-  for (let i = 0; i < dataset.length; i++){
-    var d = dataset[i];
-    var id = match(d);
-    if (id){
-      var rel_i = i;
-      while ((rel_i < dataset.length-1) && (d.wave == dataset[rel_i].wave) && (id != dataset[rel_i].iid)){
-        rel_i = rel_i + 1;
+  for (let i = 0; i < data_from.length; i++){
+
+    var d = data_from[i];
+
+    var match_iid = match(d);
+
+    if (match_iid){ //if there is a match
+
+      var match_id = 0; //let's find the match in data_to
+
+      while ((match_id < data_to.length-1) && (match_iid != data_to[match_id].iid)){
+        match_id = match_id + 1;
       }
-      if(id == dataset[rel_i].iid){
-        var rel = dataset[rel_i];
-        var relation = [{"x":compute_cluster_x(d), "y":compute_cluster_y(d)}, {"x":compute_cluster_x(rel), "y":compute_cluster_y(rel)}];
+      if(match_iid == data_to[match_id].iid && (d.wave == data_to[match_id].wave)){
+        var _match = data_to[match_id];
+        var relation = [{"x":compute_cluster_x(d), "y":compute_cluster_y(d)}, {"x":compute_cluster_x(_match), "y":compute_cluster_y(_match)}];
         r.push(relation);
       }
     }
@@ -271,7 +278,7 @@ function ageMin(nom){
 }
 
 
-function noCluster(){
+function NoCluster(){
   var div = document.getElementById("textdiv");
   var myNode = document.getElementById("textdiv");
  while (myNode.firstChild) {
@@ -502,9 +509,15 @@ function addModalGraph(l){
         .x(function(d) { return x(d.time); })
         .y(function(d) { return y(d.mark); });
 
+<<<<<<< HEAD
     modalSvg.append("path")
         .datum(object) // 10. Binds data to the line 
         .attr("class", "line") // Assign a class for styling 
+=======
+    svg.append("path")
+        .datum(object) // 10. Binds data to the line
+        .attr("class", "line") // Assign a class for styling
+>>>>>>> 2c27408ccaf8ef3d1e8726ddadb1ac3852b1ef5a
         .attr("d", line)
         .attr("transform", "translate(30,10)");
 }
