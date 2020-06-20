@@ -71,27 +71,178 @@ d3.csv("data/SpeedDating.csv")
           );
         x = d3.scaleLinear()
             .domain(d3.extent(rows, (row) => row.age))
-            .range([0, w]);
+            .range([10, w-10]);
         y = d3.scaleLinear()
             .domain(d3.extent(rows, (row) => row.income))
-            .range([0, h]);
+            .range([10, h-10]);
 
-        draw();
+        NoCluster();
     });
+    
+    function incomeA(){
+        return(d3.scaleLinear()
+        .domain(d3.extent(dataset, (d) => d.income))
+        .range([20, w-20]) );
+    }
+    
+    function ageA(){
+        return(d3.scaleLinear()
+        .domain(d3.extent(dataset, (d) => d.age))
+        .range([20, w-20]) );
+    }
 
+    function studyA(){
+        return(d3.scaleLinear()
+        .domain(d3.extent(dataset, (d) => d.field_cd))
+        .range([20, w-20]) );
+    }
 
+    function raceA(){
+        return(d3.scaleLinear()
+        .domain(d3.extent(dataset, (d) => d.race))
+        .range([20, w-20]) );
+    }
+
+    function incomeO(){
+        return(d3.scaleLinear()
+        .domain(d3.extent(dataset, (d) => d.income))
+        .range([20, h-20]) );
+    }
+    
+    function ageO(){
+        return(d3.scaleLinear()
+        .domain(d3.extent(dataset, (d) => d.age))
+        .range([20, h-20]) );
+    }
+
+    function studyO(){
+        return(d3.scaleLinear()
+        .domain(d3.extent(dataset, (d) => d.field_cd))
+        .range([20, h-20]) );
+    }
+
+    function raceO(){
+        return(d3.scaleLinear()
+        .domain(d3.extent(dataset, (d) => d.race))
+        .range([20, h-20]) );
+    }
+    
+   
+function drawbis(nom){
+    console.log(nom);
+    svg.selectAll("*").remove();
+    console.log(nom);
+
+}
 function draw() {
     svg.selectAll("*").remove();
+    // var myNode = document.getElementById("textdiv");
+    // while (myNode.firstChild) {
+    //     myNode.removeChild(myNode.firstChild);
+    // }
+
+    console.log("coucou");
+   
     var g = svg.append('g');
+
+    var radiosA = document.getElementsByName('abs');
+    console.log(radiosA)
+    var valeurmodeA;
+
+    for(var i = 0; i < radiosA.length; i++){
+        if(radiosA[i].checked){
+            valeurmodeA = radiosA[i].value;
+        }
+    }
+
+    var radiosO = document.getElementsByName('od');
+    console.log(radiosO)
+    var valeurmodeO;
+
+    for(var i = 0; i < radiosO.length; i++){
+        if(radiosO[i].checked){
+            valeurmodeO = radiosO[i].value;
+        }
+    }
+
+    var xnom;
+    var ynom;
+    var xA;
+    var yO;
+    switch(valeurmodeO){
+        case "income":
+            yO = incomeO();
+            yaxis = d3.axisRight()
+            .scale(yO);
+            ynom = "Income (€)";
+            break;
+
+        case "race":
+            yO = raceO();
+            yaxis = d3.axisRight()
+            .scale(yO);
+            ynom = "Race";
+            break;
+        case "field_cd": 
+            yO = studyO();
+            yaxis = d3.axisRight()
+            .scale(yO);
+            ynom = "Field of study";
+            break;
+        case "age": 
+            yO = ageO();
+            yaxis = d3.axisRight()
+            .scale(yO);
+            ynom = "Age";
+            break;
+}
+    console.log(valeurmodeA);
+    switch(valeurmodeA){
+        
+        case "income":
+            xA = incomeA();
+            xaxis = d3.axisBottom()
+            .scale(xA);
+            xnom = "Income (€)";
+            break;
+        case "field_cd":
+            xA = studyA();
+            xaxis = d3.axisBottom()
+            .scale(xA);
+            xnom = "Field of study";
+            break;
+        case "age": 
+            xA = ageA();
+            xaxis = d3.axisBottom()
+            .scale(xA);
+            xnom = "Age";
+            break;
+        case "race": 
+            xA = raceA();
+            xaxis = d3.axisBottom()
+            .scale(xA);
+            xnom = "Race";
+            break;
+
+    }
+
     g.selectAll("circle")
                 .data(user_dataset)
             .enter().append("circle")
                 .attr("r", 1)
-                .attr("cx", (d) => x(d.age))
-                .attr("cy", (d) => y(d.income))
+                .attr("cx", (d) => xA(d[valeurmodeA]))
+                .attr("cy", (d) => yO(d[valeurmodeO]))
                 .attr("fill", "red")
                 .attr("class", "data-entry")
                 .on("click", (d) => showModal(d));
+                svg.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(" + 20 + ", 0 )")
+                .call(yaxis);
+                svg.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(0," + 20 + ")")
+                .call(xaxis);
 
     zoomed(g)
     zoom = d3.zoom()
@@ -247,6 +398,7 @@ function visible(age,race,genre,study){
 function afficherFilter(){
     svg.selectAll("*").remove();
     var g = svg.append('g');
+    var relationships = createRelationships();
     g.selectAll("circle")
                 .data(dataset)
                 .enter().append("circle")
@@ -256,7 +408,19 @@ function afficherFilter(){
                 .attr("fill", (d) => color(d.gender))
                 .attr("visibility",(d) => visible(d.age,d.race,d.gender,d.field_cd))
                 .attr("class", "data-entry")
-                .on("click", showModal);
+                .on("click", showModal)
+                .on("mouseover",function(d){textarea.innerHTML =d.age + ", " + d.field + ", " + d.income + " position " + compute_cluster_x(d) + " " + compute_cluster_y(d)});
+    var line = d3.line()
+    .x(function (d) { return d.x; })
+    .y(function (d) { return d.y; });
+    
+    for (var i=0; i < relationships.length; i++) {
+        svg.append("path")
+        .attr("class", "plot")
+        .datum(relationships[i])
+        .attr("d", line);
+        }
+                
 }
 function ageMax(nom){
     agemax = parseInt(nom);
@@ -271,12 +435,22 @@ function ageMin(nom){
 }
 
 
-function noCluster(){
+function NoCluster(){
   var div = document.getElementById("textdiv");
   var myNode = document.getElementById("textdiv");
  while (myNode.firstChild) {
        myNode.removeChild(myNode.firstChild);
 }
+
+var divtext = document.getElementById("textdiv");
+var div1 = document.createElement("div");
+var div2 = document.createElement("div");
+div1.innerHTML="Select the abscissa : <div><input type='radio' id='income' name='abs' value='income' onclick='draw()' > <label for='income'>Income</label></div><div><input type='radio' id='age' name='abs' value='age' onclick='draw()' checked ><label for='age'> Age </label></div> <div><input type='radio' id='study' name='abs' value='field_cd' onclick='draw()'><label for='study'> Field of study </label></div> <div><input type='radio' id='race' name='abs' value='race' onclick='draw()' ><label for='race'> Race </label></div>";
+div2.innerHTML="Select the ordinate : <div><input type='radio' id='income' name='od' value='income' onclick='draw()' checked> <label for='income'>Income</label></div><div><input type='radio' id='age' name='od' value='age' onclick='draw()'><label for='age'> Age </label></div> <div><input type='radio' id='study' name='od' value='field_cd' onclick='draw()'><label for='study'> Field of study </label></div> <div><input type='radio' id='race' name='od' value='race' onclick='draw()'><label for='race'> Race </label></div>";
+divtext.appendChild(div1);
+divtext.appendChild(div2);
+
+console.log(document.getElementsByName('abs'));
 
   draw();
 }
@@ -425,3 +599,4 @@ function study(nom){
 
    afficherFilter();
 }
+ 
