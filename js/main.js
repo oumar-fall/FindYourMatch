@@ -799,7 +799,7 @@ function addModalGraph(l){
 
     shar = [shar_before, shar_during, shar_oneday_after, shar_threeweeks_after];
 
-    const noms = ["","avant", "pendant", "un jour après", "trois semaines après"];
+    var tickLabels = ['Before','During','One day after','Three weeks after']
 
     data = shar.concat(amb.concat(fun.concat(intel.concat(attr.concat(sinc)))))
     y = d3.scaleLinear()
@@ -821,10 +821,10 @@ function addModalGraph(l){
 
    
 
-    xAxis = d3.axisBottom(x)
-        .tickFormat((t)=>{return noms[t];})
+    xAxis = d3.axisTop(x)
         .tickSize(10)
-        .tickPadding(5);
+        .tickPadding(5)
+        .tickFormat(function(d,i){ return tickLabels[i] });;
 
     yAxis = d3.axisRight(y)
             .ticks(10)
@@ -834,7 +834,7 @@ function addModalGraph(l){
     modalSvg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(10,10)")
-        .call(d3.axisBottom(x));
+        .call(d3.axisTop(x));
 
     modalSvg.append("g")
         .attr("class", "y axis")
