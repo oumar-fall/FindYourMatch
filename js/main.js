@@ -428,18 +428,16 @@ function study(nom){
    afficherFilter();
 }
 
-function addModalGraph(line){
+function addModalGraph(l){
     var modalGraphic = document.getElementById("modal-graphic");
-    var w = window.getComputedStyle(modalGraphic).width;
-    var h = window.getComputedStyle(modalGraphic).height;
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    modalGraphic.appendChild(svg);
+    var modalSvg = document.createElement("svg");
+    modalSvg.id = "modal-graphic-svg";
+    modalGraphic.appendChild(modalSvg);
 
-    createGraphe(line,w,h);
+    var modal_w = window.getComputedStyle(modalSvg).width;
+    var modal_h = window.getComputedStyle(modalSvg).height;
+    var modalSvg = d3.select('#modal-graphic-svg');
 
-}
-
-function createGraphe(l,w,h){
     var before = {
         time:1,
         mark:l.attr1_1
@@ -465,14 +463,12 @@ function createGraphe(l,w,h){
 
     y = d3.scaleLinear()
         .domain([0,100])
-        .range([0, h]);
+        .range([0, modal_h]);
     x = d3.scaleOrdinal()
         .domain([0,1,2,3,4])
-        .range([0,w/4,w/2,3*w/4, w]);
+        .range([0,modal_w/4,modal_w/2,3*modal_w/4, modal_w]);
         
-
-
-    svg.selectAll("circle")
+    modalSvg.selectAll("circle")
         .data(object)
         .enter()
         .append("circle")
@@ -492,12 +488,12 @@ function createGraphe(l,w,h){
             .tickSize(10)
             .tickPadding(5);
 
-    svg.append("g")
+    modalSvg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(30,10)")
         .call(d3.axisBottom(x));
 
-    svg.append("g")
+    modalSvg.append("g")
         .attr("class", "y axis")
         .attr("transform", "translate(30,10)")
         .call(d3.axisLeft(y));
@@ -506,7 +502,7 @@ function createGraphe(l,w,h){
         .x(function(d) { return x(d.time); })
         .y(function(d) { return y(d.mark); });
 
-    svg.append("path")
+    modalSvg.append("path")
         .datum(object) // 10. Binds data to the line 
         .attr("class", "line") // Assign a class for styling 
         .attr("d", line)
