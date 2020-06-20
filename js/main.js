@@ -144,7 +144,7 @@ function drawCluster(){
   svg.selectAll("*").remove();
 
   var g = svg.append('g');
-  var relationships = createRelationships(dataset, dataset);
+  var relationships = createRelationships(dataset, user_dataset);
   g.selectAll("circle")
               .data(user_dataset)
               .enter().append("circle")
@@ -278,7 +278,7 @@ function ageMin(nom){
 }
 
 
-function noCluster(){
+function NoCluster(){
   var div = document.getElementById("textdiv");
   var myNode = document.getElementById("textdiv");
  while (myNode.firstChild) {
@@ -476,7 +476,7 @@ function createGraphe(l,w,h){
     x = d3.scaleOrdinal()
         .domain([0,1,2,3,4])
         .range([0,w/4,w/2,3*w/4, w]);
-        
+
 
 
     svg.selectAll("circle")
@@ -514,8 +514,8 @@ function createGraphe(l,w,h){
         .y(function(d) { return y(d.mark); });
 
     svg.append("path")
-        .datum(object) // 10. Binds data to the line 
-        .attr("class", "line") // Assign a class for styling 
+        .datum(object) // 10. Binds data to the line
+        .attr("class", "line") // Assign a class for styling
         .attr("d", line)
         .attr("transform", "translate(30,10)");
 }
