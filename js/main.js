@@ -3,6 +3,8 @@ const canvas = document.getElementById('canvas');
 const h = parseFloat(getComputedStyle(canvas).height);
 const w = parseFloat(getComputedStyle(canvas).width);
 const modal = document.getElementById("modal");
+var agemax = 55;
+var agemin = 18;
 let x, y, zoomState;
 let dataset = [];
 const races = [
@@ -146,12 +148,68 @@ function color(int){
     }
 }
 
+function drawFilter(){
+    svg.selectAll("*").remove();
+    var divtext  = document.getElementById("textdiv");
+    var div = document.createElement(div);
+    div.innerHTML = "<p>Audio settings:</p> <div> <input type='range' list='tickmarks'id='age' name='age' min='18' max='55' oninput = 'ageMax(age.value)'> <label for='volume'>Age Max </label> <br> <br> </div> <div><input type='range' id='agem' name='agem' list='tickmarks2' min='18' max='55'  oninput = 'ageMin(agem.value)'> <label for='cowbell'>Age Min </label></div>";
+    divtext.appendChild(div);
+}
+
+
+function visible(age){
+    if (age<agemax && age>agemin){
+        return("visible");
+    }
+    else {
+        return("hidden");
+    }
+}
+
+function afficherFilter(){
+    svg.selectAll("*").remove();
+    var g = svg.append('g');
+    g.selectAll("circle")
+                .data(dataset)
+                .enter().append("circle")
+                .attr("r", 2)
+                .attr("cx", (d) => w/23*d.wave + compute_cluster_x(2*Math.PI*d.idg/(d.round*2), (d.age-10)*3))
+                .attr("cy", (d) => h/3*(1+(d.wave % 2)) + compute_cluster_y(2*Math.PI*d.idg/(d.round*2), (d.age-10)*3))
+                .attr("fill", (d) => color(d.gender))
+                .attr("visibility",(d) => visible(d.age))
+                .attr("class", "data-entry")
+                .on("click", showModal);
+}
+function ageMax(nom){
+    agemax = parseInt(nom);
+    console.log(nom);
+    afficherFilter();
+    
+  }
+
+function ageMin(nom){
+    agemin = parseInt(nom);
+    console.log(agemin);
+    afficherFilter();
+}
+
 function noCluster(){
+  var div = document.getElementById("textdiv");
+  var myNode = document.getElementById("textdiv");
+ while (myNode.firstChild) {
+       myNode.removeChild(myNode.firstChild);
+}
+
   draw();
 }
 
 function Cluster(){
   console.log("cluster !");
+  var div = document.getElementById("textdiv");
+  var myNode = document.getElementById("textdiv");
+ while (myNode.firstChild) {
+       myNode.removeChild(myNode.firstChild);
+}
   drawCluster();
 }
 
@@ -238,4 +296,9 @@ function addModalInfos(d) {
     document.getElementById("modal-infos-undergraduate").innerHTML = "<strong>Undergraduate School : </strong><em>" + d.undergra + "</em>";
     document.getElementById("modal-infos-income").innerHTML = "<strong>Income : </strong><em>" + d.income + "</em>";
     document.getElementById("modal-infos-img").src = "media/" + ((d.gender==1)? "man" : "woman") + ".svg";
+}
+
+function Filter(){
+    console.log("filter");
+    drawFilter();
 }
