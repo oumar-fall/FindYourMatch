@@ -5,6 +5,8 @@ const w = parseFloat(getComputedStyle(canvas).width);
 const modal = document.getElementById("modal");
 var agemax = 55;
 var agemin = 18;
+var current_sexe = 0;
+var current_race = 1;
 let x, y, zoomState;
 let dataset = [];
 const races = [
@@ -147,23 +149,31 @@ function color(int){
 			return("rgb(83,80,242)");
     }
 }
-
 function drawFilter(){
     svg.selectAll("*").remove();
     var divtext  = document.getElementById("textdiv");
+    var p = document.createElement("p");
+    p.innerHTML = "Vous souhaitez trouver le type de personne qui vous convient ? Rentrez vos caractéristiques (approximatives) et nous vous montrerons avec qui les personnes qui vous ressemblent ont matché.";
+    divtext.appendChild(p);
     var div = document.createElement(div);
-    div.innerHTML = "<p>Audio settings:</p> <div> <input type='range' list='tickmarks'id='age' name='age' min='18' max='55' oninput = 'ageMax(age.value)'> <label for='volume'>Age Max </label> <br> <br> </div> <div><input type='range' id='agem' name='agem' list='tickmarks2' min='18' max='55'  oninput = 'ageMin(agem.value)'> <label for='cowbell'>Age Min </label></div>";
+    div.innerHTML = "Décrivez vous : <div> <input type='range' list='tickmarks'id='age' name='age' min='18' max='55' oninput = 'ageMax(age.value)'> <label for='volume'>Age Max </label> <br> <br> </div> <div><input type='range' id='agem' name='agem' list='tickmarks2' min='18' max='55'  oninput = 'ageMin(agem.value)'> <label for='cowbell'>Age Min </label> <br> <br> </div> Sexe : <div><input type='radio' id='F' name='sexe' value='F' onclick='sexe(F.value)' checked><label for='F'> F</label></div> <div><input type='radio' id='M' name='sexe' value='M' onclick='sexe(M.value)'> <label for='M'>M</label></div> <br> <br> Race :<div><input type='radio' id='race1' name='race' value='1' onclick='race(race1.value)'checked><label for='race1'> Black/African American </label></div> <div><input type='radio' id='race2' name='race' value='2' onclick='race(race2.value)'><label for='race2'> European/Caucasian-American </label></div> <div><input type='radio' id='race3' name='race' value='3' onclick='race(race3.value)'checked ><label for='race3'> Latino/Hispanic American </label></div> <div><input type='radio' id='race4' name='race' value='4' onclick='race(race4.value)'checked><label for='race4'> Asian/Pacific Islander/Asian-American </label></div>  <div><input type='radio' id='race5' name='race' value='5'checked onclick='race(race5.value)'><label for='race5'> Native American </label></div>  <div><input type='radio' id='race6' name='race' value='6' onclick='race(race6.value)'checked><label for='race6'> Other </label></div>  ";
     divtext.appendChild(div);
+
 }
-
-
-function visible(age){
-    if (age<agemax && age>agemin){
+function visible(age,race,genre){
+    if(genre == current_sexe) {
+        if (age<agemax && age>agemin && current_race==race){
+            return("visible");
+        }
+        else {
+            return("hidden");
+        }
+    }
+    if(genre!= current_sexe){
         return("visible");
     }
-    else {
-        return("hidden");
-    }
+   
+    
 }
 
 function afficherFilter(){
@@ -176,15 +186,14 @@ function afficherFilter(){
                 .attr("cx", (d) => w/23*d.wave + compute_cluster_x(2*Math.PI*d.idg/(d.round*2), (d.age-10)*3))
                 .attr("cy", (d) => h/3*(1+(d.wave % 2)) + compute_cluster_y(2*Math.PI*d.idg/(d.round*2), (d.age-10)*3))
                 .attr("fill", (d) => color(d.gender))
-                .attr("visibility",(d) => visible(d.age))
+                .attr("visibility",(d) => visible(d.age,d.race,d.gender))
                 .attr("class", "data-entry")
                 .on("click", showModal);
 }
 function ageMax(nom){
     agemax = parseInt(nom);
     console.log(nom);
-    afficherFilter();
-    
+    afficherFilter();  
   }
 
 function ageMin(nom){
@@ -192,6 +201,7 @@ function ageMin(nom){
     console.log(agemin);
     afficherFilter();
 }
+
 
 function noCluster(){
   var div = document.getElementById("textdiv");
@@ -300,5 +310,26 @@ function addModalInfos(d) {
 
 function Filter(){
     console.log("filter");
+
+    
+
     drawFilter();
+    
+}
+
+function sexe(nom){
+    if (nom=='F'){
+        current_sexe = 0;
+    }
+    else {
+        current_sexe = 1;
+    }
+    console.log(current_sexe);
+    afficherFilter();
+}
+
+function race(nom){
+    current_race = nom;
+    console.log(current_race);
+    afficherFilter();
 }
