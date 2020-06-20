@@ -214,3 +214,21 @@ input[type="range"]:after {
 path.plot {
   stroke: #FFA319;
 }
+
+#left {
+    position: relative;
+    float: left;
+    font-size: small;
+    line-height: 70%;
+    margin-left: 0px;
+    size: 50%;
+    overflow-x: 0;
+  }
+  #center {
+    float: left;
+    font-size: small;
+    line-height: 70%;
+    margin-left: 20px;
+    margin-right: 20px;
+    size: 50%;
+  }
