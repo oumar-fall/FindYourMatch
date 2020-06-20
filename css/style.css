@@ -65,6 +65,12 @@
     min-height: 150px;
 }
 
+.line {
+    fill: none;
+    stroke: #ffab00;
+    stroke-width: 3;
+}
+
 #modal-close {
     position: absolute;
     top : 15px;
