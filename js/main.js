@@ -144,7 +144,7 @@ function drawCluster(){
   svg.selectAll("*").remove();
 
   var g = svg.append('g');
-  var relationships = createRelationships(dataset);
+  var relationships = createRelationships(dataset, dataset);
   g.selectAll("circle")
               .data(user_dataset)
               .enter().append("circle")
@@ -177,19 +177,26 @@ function match(d){
   }
 }
 
-function createRelationships(data){
+function createRelationships(data_from, data_to){
+  // data_from : data from where we are looking
+  //data_to : data where we look for the matches
   var r = [];
-  for (let i = 0; i < data.length; i++){
-    var d = data[i];
-    var id = match(d);
-    if (id){
-      var rel_i = i;
-      while ((rel_i < data.length-1) && (d.wave == data[rel_i].wave) && (id != data[rel_i].iid)){
-        rel_i = rel_i + 1;
+  for (let i = 0; i < data_from.length; i++){
+
+    var d = data_from[i];
+
+    var match_iid = match(d);
+
+    if (match_iid){ //if there is a match
+
+      var match_id = 0; //let's find the match in data_to
+
+      while ((match_id < data_to.length-1) && (match_iid != data_to[match_id].iid)){
+        match_id = match_id + 1;
       }
-      if(id == data[rel_i].iid){
-        var rel = data[rel_i];
-        var relation = [{"x":compute_cluster_x(d), "y":compute_cluster_y(d)}, {"x":compute_cluster_x(rel), "y":compute_cluster_y(rel)}];
+      if(match_iid == data_to[match_id].iid && (d.wave == data_to[match_id].wave)){
+        var _match = data_to[match_id];
+        var relation = [{"x":compute_cluster_x(d), "y":compute_cluster_y(d)}, {"x":compute_cluster_x(_match), "y":compute_cluster_y(_match)}];
         r.push(relation);
       }
     }
