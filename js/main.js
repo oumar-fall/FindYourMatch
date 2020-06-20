@@ -323,6 +323,8 @@ function showModal(d){
             addModalNoMatchItem(item);
         }
     }
+
+    addModalGraph(d);
 }
 function closeModal() {
     modal.innerHTML = '<div class="modal-container"><div id="modal-close" onclick="closeModal()">X</div><div class="modal-content" id="modal-infos"><span class="modal-title" id="modal-infos-id"></span><div class="modal-content" id="modal-infos-details"><img id="modal-infos-img" src="media/man.svg" alt=""><div class="modal-content modal-content-2" id="modal-infos-details-text"><span class="modal-infos-details-span" id="modal-infos-age"></span><span class="modal-infos-details-span" id="modal-infos-from"></span><span class="modal-infos-details-span" id="modal-infos-race"></span><span class="modal-infos-details-span" id="modal-infos-field"></span><span class="modal-infos-details-span" id="modal-infos-income"></span><span class="modal-infos-details-span" id="modal-infos-undergraduate"></span></div></div></div><div class="modal-content" id="modal-matchs"><div class="modal-content modal-content-2" id="modal-match"><span class="modal-title" id="modal-match-title">Match</span> </div><div class="modal-content modal-content-2" id="modal-nomatch"><span class="modal-title" id="modal-nomatch-title">No Match</span></div></div><div class="modal-content" id="modal-graphic"></div></div>'
@@ -431,4 +433,89 @@ function study(nom){
     }
 
    afficherFilter();
+}
+
+function addModalGraph(line){
+    var modalGraphic = document.getElementById("modal-graphic");
+    var w = window.getComputedStyle(modalGraphic).width;
+    var h = window.getComputedStyle(modalGraphic).height;
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    modalGraphic.appendChild(svg);
+
+    createGraphe(line,w,h);
+
+}
+
+function createGraphe(l,w,h){
+    var before = {
+        time:1,
+        mark:l.attr1_1
+    };
+
+    var during = {
+        time:2,
+        mark:l.attr1_s
+    }
+
+    var oneday_after = {
+        time:3,
+        mark:l.attr7_2
+    }
+
+    var threeweeks_after = {
+        time:4,
+        mark:l.attr1_3
+    }
+
+    object = [before, during, oneday_after, threeweeks_after];
+    const noms = ["","avant", "pendant", "un jour après", "trois semaines après"];
+
+    y = d3.scaleLinear()
+        .domain([0,100])
+        .range([0, h]);
+    x = d3.scaleOrdinal()
+        .domain([0,1,2,3,4])
+        .range([0,w/4,w/2,3*w/4, w]);
+        
+
+
+    svg.selectAll("circle")
+        .data(object)
+        .enter()
+        .append("circle")
+        .attr("class","dots")
+        .attr("cx", (d)=>x(d.time))
+        .attr("cy", (d)=>y(d.mark))
+        .attr("r", 2)
+        .attr("transform", "translate(30,10)");
+
+    xAxis = d3.axisBottom(x)
+        .tickFormat((t)=>{return noms[t];})
+        .tickSize(10)
+        .tickPadding(5);
+
+    yAxis = d3.axisRight(y)
+            .ticks(10)
+            .tickSize(10)
+            .tickPadding(5);
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(30,10)")
+        .call(d3.axisBottom(x));
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(30,10)")
+        .call(d3.axisLeft(y));
+
+    const line = d3.line()
+        .x(function(d) { return x(d.time); })
+        .y(function(d) { return y(d.mark); });
+
+    svg.append("path")
+        .datum(object) // 10. Binds data to the line 
+        .attr("class", "line") // Assign a class for styling 
+        .attr("d", line)
+        .attr("transform", "translate(30,10)");
 }
