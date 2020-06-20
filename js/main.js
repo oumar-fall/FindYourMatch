@@ -6,7 +6,7 @@ const modal = document.getElementById("modal");
 var agemax = 55;
 var agemin = 18;
 let x, y, zoomState;
-let dataset = [];
+let dataset = [], user_dataset = [];
 const races = [
     "Black/African American",
 	"European/Caucasian-American",
@@ -42,6 +42,9 @@ d3.csv("data/SpeedDating.csv")
             console.log(rows[rows.length-1]);
         }
         dataset = rows;
+        user_dataset = dataset.filter(
+            (d, i, arr) => arr.findIndex(t => t.iid === d.iid) === i
+          );
         x = d3.scaleLinear()
             .domain(d3.extent(rows, (row) => row.age))
             .range([0, w]);
@@ -152,7 +155,7 @@ function drawFilter(){
     svg.selectAll("*").remove();
     var divtext  = document.getElementById("textdiv");
     var div = document.createElement(div);
-    div.innerHTML = "<p>Audio settings:</p> <div> <input type='range' list='tickmarks'id='age' name='age' min='18' max='55' oninput = 'ageMax(age.value)'> <label for='volume'>Age Max </label> <br> <br> </div> <div><input type='range' id='agem' name='agem' list='tickmarks2' min='18' max='55'  oninput = 'ageMin(agem.value)'> <label for='cowbell'>Age Min </label></div>";
+    div.innerHTML = "<p>Audio settings:</p> <div> <input type='range' list='tickmarks'id='age' name='age' min='18' max='55' oninput = 'ageMax(age.value)'> <label for='age'>Age Max </label> <br> <br> </div> <div><input type='range' id='agem' name='agem' list='tickmarks2' min='18' max='55'  oninput = 'ageMin(agem.value)'> <label for='agem'>Age Min </label></div>";
     divtext.appendChild(div);
 }
 
@@ -249,7 +252,7 @@ function addModalMatchItem(item) {
     itemDiv.classList.add("modal-match-item");
     itemDiv.onclick = () => {
         closeModal();
-        showModal(item.id);
+        showModal(dataset.find(function(x) {return x.iid == item.id}));
     }
 
     var itemImg = document.createElement('img');
@@ -270,7 +273,7 @@ function addModalNoMatchItem(item) {
     itemDiv.classList.add("modal-match-item");
     itemDiv.onclick = () => {
         closeModal();
-        showModal(item.id);
+        showModal(dataset.find(function(x) {return x.iid == item.id}));
     }
 
     var itemImg = document.createElement('img');
