@@ -438,39 +438,162 @@ function study(nom){
 function addModalGraph(l){
     var modalGraphic = document.getElementById("modal-graphic");
     var modalSvg = document.createElement("svg");
-    modalSvg.id = "modal-graphic-svg";
-    modalGraphic.appendChild(modalSvg);
 
-    var modal_w = parseFloat(window.getComputedStyle(modalSvg).width);
-    var modal_h = parseFloat(window.getComputedStyle(modalSvg).height);
-    var modalSvg = d3.select('#modal-graphic-svg')
-                        .attr("width", modal_w)
-                        .attr("height", modal_h)
-                        .attr("viewBox", [0, 0, modal_w, modal_h]);
 
-    var before = {
+    var modalSvg = d3.select('#modal-graphic')
+                        .append("svg")
+                        .attr("id", "modal-graphic-svg");
+
+    var modal_w = parseFloat(window.getComputedStyle(document.getElementById("modal-graphic-svg")).width);
+    var modal_h = parseFloat(window.getComputedStyle(document.getElementById("modal-graphic-svg")).height);
+
+
+    modalSvg.attr("width", modal_w)
+            .attr("height", modal_h)
+            .attr("viewBox", [0, 0, modal_w, modal_h]);
+
+    var attr_before = {
         time:1,
         mark:l.attr1_1
     };
 
-    var during = {
+    var attr_during = {
         time:2,
-        mark:l.attr1_ss
-    }
+        mark:l.attr1_s
+    };
 
-    var oneday_after = {
+    var attr_oneday_after = {
         time:3,
-        mark:l.attr7_2
-    }
+        mark:l.attr1_2
+    };
 
-    var threeweeks_after = {
+    var attr_threeweeks_after = {
         time:4,
         mark:l.attr1_3
-    }
+    };
 
-    object = [before, during, oneday_after, threeweeks_after];
+    attr = [attr_before, attr_during, attr_oneday_after, attr_threeweeks_after];
+
+
+
+    var sinc_before = {
+        time:1,
+        mark:l.sinc1_1
+    };
+
+    var sinc_during = {
+        time:2,
+        mark:l.sinc1_s
+    };
+
+    var sinc_oneday_after = {
+        time:3,
+        mark:l.sinc1_2
+    };
+
+    var sinc_threeweeks_after = {
+        time:4,
+        mark:l.sinc1_3
+    };
+
+    sinc = [sinc_before, sinc_during, sinc_oneday_after, sinc_threeweeks_after];
+
+
+
+    var intel_before = {
+        time:1,
+        mark:l.intel1_1
+    };
+
+    var intel_during = {
+        time:2,
+        mark:l.intel1_s
+    };
+
+    var intel_oneday_after = {
+        time:3,
+        mark:l.intel1_2
+    };
+
+    var intel_threeweeks_after = {
+        time:4,
+        mark:l.intel1_3
+    };
+
+    intel = [intel_before, intel_during, intel_oneday_after, intel_threeweeks_after];
+
+
+
+    var fun_before = {
+        time:1,
+        mark:l.fun1_1
+    };
+
+    var fun_during = {
+        time:2,
+        mark:l.fun1_s
+    };
+
+    var fun_oneday_after = {
+        time:3,
+        mark:l.fun1_2
+    };
+
+    var fun_threeweeks_after = {
+        time:4,
+        mark:l.fun1_3
+    };
+
+    fun = [fun_before, fun_during, fun_oneday_after, fun_threeweeks_after];
+
+    var amb_before = {
+        time:1,
+        mark:l.amb1_1
+    };
+
+    var amb_during = {
+        time:2,
+        mark:l.amb1_s
+    };
+
+    var amb_oneday_after = {
+        time:3,
+        mark:l.amb1_2
+    };
+
+    var amb_threeweeks_after = {
+        time:4,
+        mark:l.amb1_3
+    };
+
+    amb = [amb_before, amb_during, amb_oneday_after, amb_threeweeks_after];
+
+
+    var shar_before = {
+        time:1,
+        mark:l.shar1_1
+    };
+
+    var shar_during = {
+        time:2,
+        mark:l.shar1_s
+    };
+
+    var shar_oneday_after = {
+        time:3,
+        mark:l.shar1_2
+    };
+
+    var shar_threeweeks_after = {
+        time:4,
+        mark:l.shar1_3
+    };
+
+    shar = [shar_before, shar_during, shar_oneday_after, shar_threeweeks_after];
+
     const noms = ["","avant", "pendant", "un jour après", "trois semaines après"];
 
+    data = shar.concat(amb.concat(fun.concat(intel.concat(attr.concat(sinc)))))
     y = d3.scaleLinear()
         .domain([0,100])
         .range([0, modal_h]);
@@ -479,14 +602,16 @@ function addModalGraph(l){
         .range([0,modal_w/4,modal_w/2,3*modal_w/4, modal_w]);
         
     modalSvg.selectAll("circle")
-        .data(object)
+        .data(data)
         .enter()
         .append("circle")
         .attr("class","dots")
         .attr("cx", (d)=>x(d.time))
         .attr("cy", (d)=>y(d.mark))
         .attr("r", 2)
-        .attr("transform", "translate(30,10)");
+        .attr("transform", "translate(10,10)");
+
+   
 
     xAxis = d3.axisBottom(x)
         .tickFormat((t)=>{return noms[t];})
@@ -500,12 +625,12 @@ function addModalGraph(l){
 
     modalSvg.append("g")
         .attr("class", "x axis")
-        .attr("transform", "translate(30,10)")
+        .attr("transform", "translate(10,10)")
         .call(d3.axisBottom(x));
 
     modalSvg.append("g")
         .attr("class", "y axis")
-        .attr("transform", "translate(30,10)")
+        .attr("transform", "translate(10,10)")
         .call(d3.axisLeft(y));
 
     const line = d3.line()
@@ -513,8 +638,56 @@ function addModalGraph(l){
         .y(function(d) { return y(d.mark); });
 
     modalSvg.append("path")
-        .datum(object) // 10. Binds data to the line 
+        .datum(attr) // 10. Binds data to the line 
         .attr("class", "line") // Assign a class for styling 
         .attr("d", line)
-        .attr("transform", "translate(30,10)");
+        .style("fill", "none")
+        .style("stroke", "orange")
+        .style("stroke-width", 3)
+        .attr("transform", "translate(10,10)");
+
+    modalSvg.append("path")
+        .datum(sinc) // 10. Binds data to the line 
+        .attr("class", "line") // Assign a class for styling 
+        .attr("d", line)
+        .style("stroke", "red")
+        .style("fill", "none")
+        .style("stroke-width", 3)
+        .attr("transform", "translate(10,10)");
+
+    modalSvg.append("path")
+        .datum(intel) // 10. Binds data to the line 
+        .attr("class", "line") // Assign a class for styling 
+        .attr("d", line)
+        .style("fill", "none")
+        .style("stroke", "green")
+        .style("stroke-width", 3)
+        .attr("transform", "translate(10,10)");
+
+    modalSvg.append("path")
+        .datum(fun) // 10. Binds data to the line 
+        .attr("class", "line") // Assign a class for styling 
+        .attr("d", line)
+        .style("fill", "none")
+        .style ("stroke", "blue")
+        .style("stroke-width", 3)
+        .attr("transform", "translate(10,10)");
+
+    modalSvg.append("path")
+        .datum(amb) // 10. Binds data to the line 
+        .attr("class", "line") // Assign a class for styling 
+        .attr("d", line)
+        .style("fill", "none")
+        .style("stroke", "pink")
+        .style("stroke-width", 3)
+        .attr("transform", "translate(10,10)");
+
+    modalSvg.append("path")
+        .datum(shar) // 10. Binds data to the line 
+        .attr("class", "line") // Assign a class for styling 
+        .attr("d", line)
+        .style("fill", "none")
+        .style("stroke", "purple")
+        .style("stroke-width", 3)
+        .attr("transform", "translate(10,10)");
 }
