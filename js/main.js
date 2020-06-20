@@ -441,9 +441,12 @@ function addModalGraph(l){
     modalSvg.id = "modal-graphic-svg";
     modalGraphic.appendChild(modalSvg);
 
-    var modal_w = window.getComputedStyle(modalSvg).width;
-    var modal_h = window.getComputedStyle(modalSvg).height;
-    var modalSvg = d3.select('#modal-graphic-svg');
+    var modal_w = parseFloat(window.getComputedStyle(modalSvg).width);
+    var modal_h = parseFloat(window.getComputedStyle(modalSvg).height);
+    var modalSvg = d3.select('#modal-graphic-svg')
+                        .attr("width", modal_w)
+                        .attr("height", modal_h)
+                        .attr("viewBox", [0, 0, modal_w, modal_h]);
 
     var before = {
         time:1,
@@ -509,15 +512,9 @@ function addModalGraph(l){
         .x(function(d) { return x(d.time); })
         .y(function(d) { return y(d.mark); });
 
-<<<<<<< HEAD
     modalSvg.append("path")
         .datum(object) // 10. Binds data to the line 
         .attr("class", "line") // Assign a class for styling 
-=======
-    svg.append("path")
-        .datum(object) // 10. Binds data to the line
-        .attr("class", "line") // Assign a class for styling
->>>>>>> 2c27408ccaf8ef3d1e8726ddadb1ac3852b1ef5a
         .attr("d", line)
         .attr("transform", "translate(30,10)");
 }
