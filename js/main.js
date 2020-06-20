@@ -8,7 +8,7 @@ var agemin = 18;
 var current_sexe = 0;
 var current_race = 1;
 let x, y, zoomState;
-let dataset = [];
+let dataset = [], user_dataset = [];
 const races = [
     "Black/African American",
 	"European/Caucasian-American",
@@ -44,6 +44,9 @@ d3.csv("data/SpeedDating.csv")
             console.log(rows[rows.length-1]);
         }
         dataset = rows;
+        user_dataset = dataset.filter(
+            (d, i, arr) => arr.findIndex(t => t.iid === d.iid) === i
+          );
         x = d3.scaleLinear()
             .domain(d3.extent(rows, (row) => row.age))
             .range([0, w]);
@@ -259,7 +262,7 @@ function addModalMatchItem(item) {
     itemDiv.classList.add("modal-match-item");
     itemDiv.onclick = () => {
         closeModal();
-        showModal(item.id);
+        showModal(dataset.find(function(x) {return x.iid == item.id}));
     }
 
     var itemImg = document.createElement('img');
@@ -280,7 +283,7 @@ function addModalNoMatchItem(item) {
     itemDiv.classList.add("modal-match-item");
     itemDiv.onclick = () => {
         closeModal();
-        showModal(item.id);
+        showModal(dataset.find(function(x) {return x.iid == item.id}));
     }
 
     var itemImg = document.createElement('img');
