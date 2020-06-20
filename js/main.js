@@ -138,15 +138,47 @@ function color(int){
     }
 }
 
+function drawFilter(){
+    svg.selectAll("*").remove();
+    var divtext  = document.getElementById("textdiv");
+    var div = document.createElement(div);
+    div.innerHTML = "<p>Audio settings:</p> <div> <input type='range' list='tickmarks'id='age' name='age' min='0' max='11' oninput = 'voir1(age.value)'> <label for='volume'>Age</label> <br> <br> </div> <div><input type='range' id='cowbell' name='cowbell' list='tickmarks2' min='0' max='100' value='90' step='10' oninput = 'voir1(volume.value)'> <label for='cowbell'>Cowbell</label></div>";
+    divtext.appendChild(div);
+}
+
+function voir1(nom){
+    console.log(nom);
+}
+
+function voir2(nom){
+    console.log(nom);
+}
+
 function noCluster(){
+  var div = document.getElementById("textdiv");
+  var myNode = document.getElementById("textdiv");
+ while (myNode.firstChild) {
+       myNode.removeChild(myNode.firstChild);
+}
+
   draw();
 }
 
 function Cluster(){
   console.log("cluster !");
+  var div = document.getElementById("textdiv");
+  var myNode = document.getElementById("textdiv");
+ while (myNode.firstChild) {
+       myNode.removeChild(myNode.firstChild);
+}
   drawCluster();
 }
 
 function showModal(d, i){
     modal.style.display = "flex";
+}
+
+function Filter(){
+    console.log("filter");
+    drawFilter();
 }
