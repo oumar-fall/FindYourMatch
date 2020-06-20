@@ -10,6 +10,7 @@ var current_race = 1;
 var current_study = 1;
 var all_study = true;
 var all_race = true;
+var personnesress = [];
 let x, y, zoomState;
 let dataset = [], user_dataset = [];
 const races = [
@@ -129,9 +130,7 @@ d3.csv("data/SpeedDating.csv")
     
    
 function drawbis(nom){
-    console.log(nom);
     svg.selectAll("*").remove();
-    console.log(nom);
 
 }
 function draw() {
@@ -140,13 +139,10 @@ function draw() {
     // while (myNode.firstChild) {
     //     myNode.removeChild(myNode.firstChild);
     // }
-
-    console.log("coucou");
    
     var g = svg.append('g');
 
     var radiosA = document.getElementsByName('abs');
-    console.log(radiosA)
     var valeurmodeA;
 
     for(var i = 0; i < radiosA.length; i++){
@@ -156,7 +152,6 @@ function draw() {
     }
 
     var radiosO = document.getElementsByName('od');
-    console.log(radiosO)
     var valeurmodeO;
 
     for(var i = 0; i < radiosO.length; i++){
@@ -196,7 +191,6 @@ function draw() {
             ynom = "Age";
             break;
 }
-    console.log(valeurmodeA);
     switch(valeurmodeA){
         
         case "income":
@@ -336,6 +330,7 @@ function onMouseOver(d, i){
 }
 
 function match(d){
+
   if (d.match == "1"){
     return(d.pid);
   }
@@ -346,11 +341,12 @@ function createRelationships(data_from, data_to){
   //data_to : data where we look for the matches
   var r = [];
   for (let i = 0; i < data_from.length; i++){
+      
 
     var d = data_from[i];
-
+    
     var match_iid = match(d);
-
+    //console.log(match_iid);
     if (match_iid){ //if there is a match
 
       var match_id = 0; //let's find the match in data_to
@@ -403,9 +399,10 @@ function drawFilter(){
     divtext.appendChild(div);
 
 }
-function visible(age,race,genre,study){
+function visible(age,race,genre,study,d){
     if(genre == current_sexe) {
         if (age<agemax && age>agemin && current_race==race && (parseInt(study) == parseInt(current_study) || all_study ==true)){
+            personnesress.push(d);
             return("visible");
         }
         else {
@@ -432,21 +429,21 @@ function rayon(age,race, genre, study){
 function afficherFilter(){
     svg.selectAll("*").remove();
     var g = svg.append('g');
-    var relationships = createRelationships(dataset, user_dataset);
+    
     g.selectAll("circle")
-                .data(user_dataset)
+                .data(dataset)
                 .enter().append("circle")
                 .attr("r", (d) => rayon(d.age,d.race,d.gender,d.field_cd))
                 .attr("cx", (d) => compute_cluster_x(d))
                 .attr("cy", (d) => compute_cluster_y(d))
                 .attr("fill", (d) => color(d.gender))
-                .attr("visibility",(d) => visible(d.age,d.race,d.gender,d.field_cd))
+                .attr("visibility",(d) => visible(d.age,d.race,d.gender,d.field_cd,d))
                 .attr("class", "data-entry")
                 .on("click", showModal);
     var line = d3.line()
     .x(function (d) { return d.x; })
     .y(function (d) { return d.y; });
-    
+    var relationships = createRelationships(personnesress, dataset);
     for (var i=0; i < relationships.length; i++) {
         svg.append("path")
         .attr("class", "plot")
@@ -457,13 +454,11 @@ function afficherFilter(){
 }
 function ageMax(nom){
     agemax = parseInt(nom);
-    console.log(nom);
     afficherFilter();
   }
 
 function ageMin(nom){
     agemin = parseInt(nom);
-    console.log(agemin);
     afficherFilter();
 }
 
@@ -622,7 +617,6 @@ function sexe(nom){
     else {
         current_sexe = 1;
     }
-    console.log(current_sexe);
     afficherFilter();
 }
 
