@@ -79,13 +79,13 @@ d3.csv("data/SpeedDating.csv")
 
         NoCluster();
     });
-    
+
     function incomeA(){
         return(d3.scaleLinear()
         .domain(d3.extent(dataset, (d) => d.income))
         .range([20, w-20]) );
     }
-    
+
     function ageA(){
         return(d3.scaleLinear()
         .domain(d3.extent(dataset, (d) => d.age))
@@ -109,7 +109,7 @@ d3.csv("data/SpeedDating.csv")
         .domain(d3.extent(dataset, (d) => d.income))
         .range([20, h-20]) );
     }
-    
+
     function ageO(){
         return(d3.scaleLinear()
         .domain(d3.extent(dataset, (d) => d.age))
@@ -127,8 +127,8 @@ d3.csv("data/SpeedDating.csv")
         .domain(d3.extent(dataset, (d) => d.race))
         .range([20, h-20]) );
     }
-    
-   
+
+
 function drawbis(nom){
     svg.selectAll("*").remove();
 
@@ -139,7 +139,7 @@ function draw() {
     // while (myNode.firstChild) {
     //     myNode.removeChild(myNode.firstChild);
     // }
-   
+
     var g = svg.append('g');
 
     var radiosA = document.getElementsByName('abs');
@@ -178,13 +178,13 @@ function draw() {
             .scale(yO);
             ynom = "Race";
             break;
-        case "field_cd": 
+        case "field_cd":
             yO = studyO();
             yaxis = d3.axisRight()
             .scale(yO);
             ynom = "Field of study";
             break;
-        case "age": 
+        case "age":
             yO = ageO();
             yaxis = d3.axisRight()
             .scale(yO);
@@ -192,7 +192,7 @@ function draw() {
             break;
 }
     switch(valeurmodeA){
-        
+
         case "income":
             xA = incomeA();
             xaxis = d3.axisBottom()
@@ -205,13 +205,13 @@ function draw() {
             .scale(xA);
             xnom = "Field of study";
             break;
-        case "age": 
+        case "age":
             xA = ageA();
             xaxis = d3.axisBottom()
             .scale(xA);
             xnom = "Age";
             break;
-        case "race": 
+        case "race":
             xA = raceA();
             xaxis = d3.axisBottom()
             .scale(xA);
@@ -325,10 +325,10 @@ function createRelationships(data_from, data_to){
   //data_to : data where we look for the matches
   var r = [];
   for (let i = 0; i < data_from.length; i++){
-      
+
 
     var d = data_from[i];
-    
+
     var match_iid = match(d);
     //console.log(match_iid);
     if (match_iid){ //if there is a match
@@ -363,7 +363,7 @@ function compute_cluster_x(d){
 function color(int){
   switch(int){
 		case "0":
-			return("rgb(245,166,241)");
+			return("rgb(232, 67, 147)");
 		case "1":
 			return("rgb(83,80,242)");
     }
@@ -413,7 +413,7 @@ function rayon(age,race, genre, study){
 function afficherFilter(){
     svg.selectAll("*").remove();
     var g = svg.append('g');
-    
+
     g.selectAll("circle")
                 .data(dataset)
                 .enter().append("circle")
@@ -434,7 +434,7 @@ function afficherFilter(){
         .datum(relationships[i])
         .attr("d", line);
         }
-                
+
 }
 function ageMax(nom){
     agemax = parseInt(nom);
@@ -797,7 +797,7 @@ function addModalGraph(l){
     var modal_x = d3.scaleOrdinal()
         .domain([0,1,2,3,4,5])
         .range([0,step, 3*step, 5*step, 7*step, 8*step]);
-        
+
     modalSvg.selectAll("circle")
         .data(data)
         .enter()
@@ -808,7 +808,7 @@ function addModalGraph(l){
         .attr("r", 2)
         .attr("transform", "translate(10,10)");
 
-   
+
 
     var modal_xAxis = d3.axisTop(modal_x)
         .tickSize(10)
@@ -835,9 +835,9 @@ function addModalGraph(l){
         .y(function(d) { return modal_y(d.mark); });
 
     modalSvg.append("path")
-        .datum(attr) // 10. Binds data to the line 
+        .datum(attr) // 10. Binds data to the line
         .attr("class", "modal-graphic-line")
-        .attr("id", "modal-graphic-line-attr") // Assign a class for styling 
+        .attr("id", "modal-graphic-line-attr") // Assign a class for styling
         .attr("d", line)
         .style("fill", "none")
         .style("stroke", "orange")
@@ -845,8 +845,8 @@ function addModalGraph(l){
         .attr("transform", "translate(10,10)");
 
     modalSvg.append("path")
-        .datum(sinc) // 10. Binds data to the line 
-        .attr("class", "modal-graphic-line") // Assign a class for styling 
+        .datum(sinc) // 10. Binds data to the line
+        .attr("class", "modal-graphic-line") // Assign a class for styling
         .attr("id", "modal-graphic-line-sinc")
         .attr("d", line)
         .style("stroke", "red")
@@ -855,8 +855,8 @@ function addModalGraph(l){
         .attr("transform", "translate(10,10)");
 
     modalSvg.append("path")
-        .datum(intel) // 10. Binds data to the line 
-        .attr("class", "modal-graphic-line") // Assign a class for styling 
+        .datum(intel) // 10. Binds data to the line
+        .attr("class", "modal-graphic-line") // Assign a class for styling
         .attr("id", "modal-graphic-line-intel")
         .attr("d", line)
         .style("fill", "none")
@@ -865,8 +865,8 @@ function addModalGraph(l){
         .attr("transform", "translate(10,10)");
 
     modalSvg.append("path")
-        .datum(fun) // 10. Binds data to the line 
-        .attr("class", "modal-graphic-line") // Assign a class for styling 
+        .datum(fun) // 10. Binds data to the line
+        .attr("class", "modal-graphic-line") // Assign a class for styling
         .attr("id", "modal-graphic-line-fun")
         .attr("d", line)
         .style("fill", "none")
@@ -875,8 +875,8 @@ function addModalGraph(l){
         .attr("transform", "translate(10,10)");
 
     modalSvg.append("path")
-        .datum(amb) // 10. Binds data to the line 
-        .attr("class", "modal-graphic-line") // Assign a class for styling 
+        .datum(amb) // 10. Binds data to the line
+        .attr("class", "modal-graphic-line") // Assign a class for styling
         .attr("id", "modal-graphic-line-amb")
         .attr("d", line)
         .style("fill", "none")
@@ -885,8 +885,8 @@ function addModalGraph(l){
         .attr("transform", "translate(10,10)");
 
     modalSvg.append("path")
-        .datum(shar) // 10. Binds data to the line 
-        .attr("class", "modal-graphic-line") // Assign a class for styling 
+        .datum(shar) // 10. Binds data to the line
+        .attr("class", "modal-graphic-line") // Assign a class for styling
         .attr("id", "modal-graphic-line-shar")
         .attr("d", line)
         .style("fill", "none")
@@ -908,4 +908,3 @@ function highlightLine(lineName, active) {
                 .attr("stroke-opacity", 1);
     }
 }
-
