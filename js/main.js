@@ -49,7 +49,7 @@ let svg = d3.select("#canvas")
                 .attr("viewBox", [0, 0, w,  h])
                 .attr("class", "mainSvg")
 
-var xAxis, yAxis, gX, gY;
+var xAxis, yAxis, gX, gY, zoom;
 
 d3.csv("data/SpeedDating.csv")
     .row( (d, i) => {
@@ -223,33 +223,12 @@ function draw() {
     g.selectAll("circle")
                 .data(user_dataset)
             .enter().append("circle")
-                .attr("r", 1)
+                .attr("r", 2)
                 .attr("cx", (d) => xA(d[valeurmodeA]))
                 .attr("cy", (d) => yO(d[valeurmodeO]))
                 .attr("fill", (d) => color(d.gender))
                 .attr("class", "data-entry")
                 .on("click", (d) => showModal(d));
-                svg.append("g")
-                .attr("class", "axis")
-                .attr("transform", "translate(" + 0 + ", 0 )")
-                .call(yaxis);
-                svg.append("g")
-                .attr("class", "axis")
-                .attr("transform", "translate(0," + 0  + ")")
-                .call(xaxis);
-                svg.append("text")
-                .attr("class", "ylabel")
-                .attr("text-anchor", "end")
-                .attr("y", 20)
-                .attr("x", w - 50)
-                .text(xnom);
-        
-                svg.append("text")
-                .attr("class", "ylabel")
-                .attr("text-anchor", "start")
-                .attr("y", h -10  )
-                .attr("x", 20 )
-                .text(ynom);
 
     zoomed(g)
     zoom = d3.zoom()
@@ -268,21 +247,26 @@ function draw() {
             .tickPadding(5);
 
     gX = svg.append('g')
-    .attr("class", "x axis")
-    .attr("transform" , "translate(0, " + (h) + ")")
-    gX.call(xAxis)
-        .insert("rect", ":first-child")
-            .attr("class", "bg")
-            .attr("height", "100%")
-            .attr("width", "100%")
+                .attr("class", "x axis")
+                .call(xAxis)
+
     gY = svg.append('g')
-    .attr("class", "y axis")
-    .attr("transform", "translate(" + (w) + ", 0)")
-    gY.call(yAxis)
-        .insert("rect", ":first-child")
-            .attr("class", "bg")
-            .attr("height", "100%")
-            .attr("width", "100%")
+                .attr("class", "y axis")
+                .call(yAxis);
+
+    svg.append("text")
+        .attr("class", "xlabel")
+        .attr("text-anchor", "end")
+        .attr("y", 50)
+        .attr("x", w - 10)
+        .text(xnom);
+
+    svg.append("text")
+        .attr("class", "ylabel")
+        .attr("text-anchor", "start")
+        .attr("y", h - 10)
+        .attr("x", 50 )
+        .text(ynom);
 }
 
 function zoomed(g){
@@ -301,12 +285,12 @@ function zoomed(g){
 function drawCluster(){
   svg.selectAll("*").remove();
 
-  var g = svg.append('g');
+  var g = svg.append('g')
   var relationships = createRelationships(dataset, user_dataset);
   g.selectAll("circle")
               .data(user_dataset)
               .enter().append("circle")
-              .attr("r", 2)
+              .attr("r", 3)
               .attr("cx", (d) => compute_cluster_x(d))
               .attr("cy", (d) => compute_cluster_y(d))
               .attr("fill", (d) => color(d.gender))
@@ -314,11 +298,11 @@ function drawCluster(){
               .on("click", showModal)
               .on("mouseover",function(d){textarea.innerHTML =d.age + ", " + d.field + ", " + d.income });
   var line = d3.line()
-  .x(function (d) { return d.x; })
-  .y(function (d) { return d.y; });
+                .x(function (d) { return d.x; })
+                .y(function (d) { return d.y; });
 
   for (var i=0; i < relationships.length; i++) {
-    svg.append("path")
+    g.append("path")
       .attr("class", "plot")
       .datum(relationships[i])
       .attr("d", line);
@@ -445,7 +429,7 @@ function afficherFilter(){
     .y(function (d) { return d.y; });
     var relationships = createRelationships(personnesress, dataset);
     for (var i=0; i < relationships.length; i++) {
-        svg.append("path")
+        g.append("path")
         .attr("class", "plot")
         .datum(relationships[i])
         .attr("d", line);
@@ -506,10 +490,11 @@ raceexpl.innerHTML = "";
 }
 
 function getGender(id) {
-    return dataset.find(function(x) {
+    var user = user_dataset.find(function(x) {
         return x.iid == id;
-    }).gender;
-
+    });
+    if (user) {return user_dataset.gender}
+    else {return 3}
 }
 
 function showModal(d){
@@ -534,7 +519,7 @@ function showModal(d){
     addModalGraph(d);
 }
 function closeModal() {
-    modal.innerHTML = '<div class="modal-container"><div id="modal-close" onclick="closeModal()">X</div><div class="modal-content" id="modal-infos"><span class="modal-title" id="modal-infos-id"></span><div class="modal-content" id="modal-infos-details"><img id="modal-infos-img" src="media/man.svg" alt=""><div class="modal-content modal-content-2" id="modal-infos-details-text"><span class="modal-infos-details-span" id="modal-infos-age"></span><span class="modal-infos-details-span" id="modal-infos-from"></span><span class="modal-infos-details-span" id="modal-infos-race"></span><span class="modal-infos-details-span" id="modal-infos-field"></span><span class="modal-infos-details-span" id="modal-infos-income"></span><span class="modal-infos-details-span" id="modal-infos-undergraduate"></span></div></div></div><div class="modal-content" id="modal-matchs"><div class="modal-content modal-content-2" id="modal-match"><span class="modal-title" id="modal-match-title">Match</span> </div><div class="modal-content modal-content-2" id="modal-nomatch"><span class="modal-title" id="modal-nomatch-title">No Match</span></div></div><div class="modal-content" id="modal-graphic"></div></div>'
+    modal.innerHTML = '<div class="modal-container"><div id="modal-close" onclick="closeModal()">X</div><div class="modal-content" id="modal-infos"><span class="modal-title" id="modal-infos-id"></span><div class="modal-content" id="modal-infos-details"><img id="modal-infos-img" src="media/man.svg" alt=""><div class="modal-content modal-content-2" id="modal-infos-details-text"><span class="modal-infos-details-span" id="modal-infos-age"></span><span class="modal-infos-details-span" id="modal-infos-from"></span><span class="modal-infos-details-span" id="modal-infos-race"></span><span class="modal-infos-details-span" id="modal-infos-field"></span><span class="modal-infos-details-span" id="modal-infos-income"></span><span class="modal-infos-details-span" id="modal-infos-undergraduate"></span></div></div></div><div class="modal-content" id="modal-matchs"><div class="modal-content modal-content-2" id="modal-match"><span class="modal-title" id="modal-match-title">Match</span></div><div class="modal-content modal-content-2" id="modal-nomatch"><span class="modal-title" id="modal-nomatch-title">No Match</span></div></div><div class="modal-content" id="modal-graphic"><div id="modal-graphic-legend"><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'attr\', true);" onmouseout="highlightLine(\'attr\', false)"><span class="modal-graphic-legend-line" style="border-color: orange;"></span><span class="modal-graphic-legend-text">Attractive</span></div><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'sinc\', true);" onmouseout="highlightLine(\'sinc\', false)"><span class="modal-graphic-legend-line" style="border-color: red;"></span><span class="modal-graphic-legend-text">Sincere</span></div><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'intel\', true);" onmouseout="highlightLine(\'intel\', false)"><span class="modal-graphic-legend-line" style="border-color: green;"></span><span class="modal-graphic-legend-text">Intelligent</span></div><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'fun\', true);" onmouseout="highlightLine(\'fun\', false)"><span class="modal-graphic-legend-line" style="border-color: blue;"></span><span class="modal-graphic-legend-text">Fun</span></div><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'amb\', true);" onmouseout="highlightLine(\'amb\', false)"><span class="modal-graphic-legend-line" style="border-color: pink;"></span><span class="modal-graphic-legend-text">Ambitious</span></div><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'shar\', true);" onmouseout="highlightLine(\'shar\', false)"><span class="modal-graphic-legend-line" style="border-color: purple;"></span><span class="modal-graphic-legend-text">Shared Interests</span></div></div></div></div>'
     modal.style.display = "none";
 }
 
@@ -648,8 +633,6 @@ function study(nom){
 
 function addModalGraph(l){
     var modalGraphic = document.getElementById("modal-graphic");
-    var modalSvg = document.createElement("svg");
-
 
     var modalSvg = d3.select('#modal-graphic')
                         .append("svg")
@@ -661,7 +644,7 @@ function addModalGraph(l){
 
     modalSvg.attr("width", modal_w)
             .attr("height", modal_h)
-            .attr("viewBox", [0, 0, modal_w, modal_h]);
+            .attr("viewBox", [-10, -20, modal_w+30, modal_h+40]);
 
     var attr_before = {
         time:1,
@@ -802,55 +785,59 @@ function addModalGraph(l){
 
     shar = [shar_before, shar_during, shar_oneday_after, shar_threeweeks_after];
 
-    var tickLabels = ['Before','During','One day after','Three weeks after']
+    var tickLabels = ['','Before','During','One day after','Three weeks after', '']
 
     data = shar.concat(amb.concat(fun.concat(intel.concat(attr.concat(sinc)))))
-    y = d3.scaleLinear()
-        .domain([0,100])
+
+    var step = modal_w/8;
+
+    var modal_y = d3.scaleLinear()
+        .domain(d3.extent(data, (d)=>+d.mark))
         .range([0, modal_h]);
-    x = d3.scaleOrdinal()
-        .domain([0,1,2,3,4])
-        .range([0,modal_w/4,modal_w/2,3*modal_w/4, modal_w]);
+    var modal_x = d3.scaleOrdinal()
+        .domain([0,1,2,3,4,5])
+        .range([0,step, 3*step, 5*step, 7*step, 8*step]);
         
     modalSvg.selectAll("circle")
         .data(data)
         .enter()
         .append("circle")
         .attr("class","dots")
-        .attr("cx", (d)=>x(d.time))
-        .attr("cy", (d)=>y(d.mark))
+        .attr("cx", (d)=>modal_x(d.time))
+        .attr("cy", (d)=>modal_y(d.mark))
         .attr("r", 2)
         .attr("transform", "translate(10,10)");
 
    
 
-    xAxis = d3.axisTop(x)
+    var modal_xAxis = d3.axisTop(modal_x)
         .tickSize(10)
         .tickPadding(5)
         .tickFormat(function(d,i){ return tickLabels[i] });;
 
-    yAxis = d3.axisRight(y)
+    var modal_yAxis = d3.axisLeft(modal_y)
             .ticks(10)
-            .tickSize(10)
+            .tickSize(-modal_w)
             .tickPadding(5);
 
     modalSvg.append("g")
-        .attr("class", "x axis")
+        .attr("class", "modal_x_axis")
         .attr("transform", "translate(10,10)")
-        .call(d3.axisTop(x));
+        .call(modal_xAxis);
 
     modalSvg.append("g")
-        .attr("class", "y axis")
+        .attr("class", "modal-y-axis")
         .attr("transform", "translate(10,10)")
-        .call(d3.axisLeft(y));
+        .call(modal_yAxis);
 
     const line = d3.line()
-        .x(function(d) { return x(d.time); })
-        .y(function(d) { return y(d.mark); });
+        .x(function(d) { return modal_x(d.time); })
+        .y(function(d) { return modal_y(d.mark); });
 
     modalSvg.append("path")
         .datum(attr) // 10. Binds data to the line 
-        .attr("class", "line") // Assign a class for styling 
+        .attr("class", "modal-graphic-line")
+        .attr("id", "modal-graphic-line-attr") // Assign a class for styling 
         .attr("d", line)
         .style("fill", "none")
         .style("stroke", "orange")
@@ -859,7 +846,8 @@ function addModalGraph(l){
 
     modalSvg.append("path")
         .datum(sinc) // 10. Binds data to the line 
-        .attr("class", "line") // Assign a class for styling 
+        .attr("class", "modal-graphic-line") // Assign a class for styling 
+        .attr("id", "modal-graphic-line-sinc")
         .attr("d", line)
         .style("stroke", "red")
         .style("fill", "none")
@@ -868,7 +856,8 @@ function addModalGraph(l){
 
     modalSvg.append("path")
         .datum(intel) // 10. Binds data to the line 
-        .attr("class", "line") // Assign a class for styling 
+        .attr("class", "modal-graphic-line") // Assign a class for styling 
+        .attr("id", "modal-graphic-line-intel")
         .attr("d", line)
         .style("fill", "none")
         .style("stroke", "green")
@@ -877,7 +866,8 @@ function addModalGraph(l){
 
     modalSvg.append("path")
         .datum(fun) // 10. Binds data to the line 
-        .attr("class", "line") // Assign a class for styling 
+        .attr("class", "modal-graphic-line") // Assign a class for styling 
+        .attr("id", "modal-graphic-line-fun")
         .attr("d", line)
         .style("fill", "none")
         .style ("stroke", "blue")
@@ -886,7 +876,8 @@ function addModalGraph(l){
 
     modalSvg.append("path")
         .datum(amb) // 10. Binds data to the line 
-        .attr("class", "line") // Assign a class for styling 
+        .attr("class", "modal-graphic-line") // Assign a class for styling 
+        .attr("id", "modal-graphic-line-amb")
         .attr("d", line)
         .style("fill", "none")
         .style("stroke", "pink")
@@ -895,11 +886,26 @@ function addModalGraph(l){
 
     modalSvg.append("path")
         .datum(shar) // 10. Binds data to the line 
-        .attr("class", "line") // Assign a class for styling 
+        .attr("class", "modal-graphic-line") // Assign a class for styling 
+        .attr("id", "modal-graphic-line-shar")
         .attr("d", line)
         .style("fill", "none")
         .style("stroke", "purple")
         .style("stroke-width", 3)
         .attr("transform", "translate(10,10)");
+}
+
+function highlightLine(lineName, active) {
+    var modalSvg = d3.select("#modal-graphic-svg");
+    if (active) {
+        modalSvg.selectAll(".modal-graphic-line")
+                .attr("stroke-opacity", 0.1);
+        modalSvg.select("#modal-graphic-line-" + lineName)
+                .attr("stroke-opacity", 1);
+    }
+    else {
+        modalSvg.selectAll(".modal-graphic-line")
+                .attr("stroke-opacity", 1);
+    }
 }
 
