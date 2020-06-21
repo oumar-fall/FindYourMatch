@@ -38,6 +38,7 @@
                 </div>
                 <div class="modal-content" id="modal-graphic">
                     <div id="modal-graphic-legend">
+                        <span><em>Move over to see details</em></span>
                         <div class="modal-graphic-legend-item" onmouseover="highlightLine('attr', true);" onmouseout="highlightLine('attr', false)">
                             <span class="modal-graphic-legend-line" style="border-color: orange;"></span>
                             <span class="modal-graphic-legend-text">Attractive</span>
@@ -66,7 +67,12 @@
                 </div>
             </div>
         </section>
-        <section id="canvas"></section>
+        <section id="canvas">
+            <div id="tooltip">
+                ID : <span id="tooltip-content"></span><br>
+                <em>Click for details</em>
+            </div>
+        </section>
 
         <br>
         <div id ="textarea">Infos</div>

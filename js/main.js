@@ -223,12 +223,14 @@ function draw() {
     g.selectAll("circle")
                 .data(user_dataset)
             .enter().append("circle")
-                .attr("r", 2)
+                .attr("r", 3)
                 .attr("cx", (d) => xA(d[valeurmodeA]))
                 .attr("cy", (d) => yO(d[valeurmodeO]))
                 .attr("fill", (d) => color(d.gender))
                 .attr("class", "data-entry")
-                .on("click", (d) => showModal(d));
+                .on("click", (d) => showModal(d))
+                .on("mouseover", showTooltip)
+                .on("mouseout", hideTooltip);
 
     zoomed(g)
     zoom = d3.zoom()
@@ -296,7 +298,8 @@ function drawCluster(){
               .attr("fill", (d) => color(d.gender))
               .attr("class", "data-entry")
               .on("click", showModal)
-              .on("mouseover",function(d){textarea.innerHTML =d.age + ", " + d.field + ", " + d.income });
+              .on("mouseover", showTooltip)
+              .on("mouseout", hideTooltip);
   var line = d3.line()
                 .x(function (d) { return d.x; })
                 .y(function (d) { return d.y; });
@@ -403,16 +406,17 @@ function visible(age,race,genre,study,d){
 function rayon(age,race, genre, study){
     if(genre == current_sexe) {
         if (age<agemax && age>agemin && current_race==race && (parseInt(study) == parseInt(current_study) || all_study ==true)){
-            return(4);
+            return(5);
         }
     }
 
-    return(2);
+    return(3);
 }
 
 function afficherFilter(){
     svg.selectAll("*").remove();
     var g = svg.append('g');
+    personnesress = [];
 
     g.selectAll("circle")
                 .data(dataset)
@@ -423,7 +427,10 @@ function afficherFilter(){
                 .attr("fill", (d) => color(d.gender))
                 .attr("visibility",(d) => visible(d.age,d.race,d.gender,d.field_cd,d))
                 .attr("class", "data-entry")
-                .on("click", showModal);
+                .on("click", showModal)
+                .on("mouseover", showTooltip)
+                .on("mouseout", hideTooltip);
+
     var line = d3.line()
     .x(function (d) { return d.x; })
     .y(function (d) { return d.y; });
@@ -493,7 +500,8 @@ function getGender(id) {
     var user = user_dataset.find(function(x) {
         return x.iid == id;
     });
-    if (user) {return user_dataset.gender}
+    console.log(user);
+    if (user) {return user.gender}
     else {return 3}
 }
 
@@ -519,7 +527,7 @@ function showModal(d){
     addModalGraph(d);
 }
 function closeModal() {
-    modal.innerHTML = '<div class="modal-container"><div id="modal-close" onclick="closeModal()">X</div><div class="modal-content" id="modal-infos"><span class="modal-title" id="modal-infos-id"></span><div class="modal-content" id="modal-infos-details"><img id="modal-infos-img" src="media/man.svg" alt=""><div class="modal-content modal-content-2" id="modal-infos-details-text"><span class="modal-infos-details-span" id="modal-infos-age"></span><span class="modal-infos-details-span" id="modal-infos-from"></span><span class="modal-infos-details-span" id="modal-infos-race"></span><span class="modal-infos-details-span" id="modal-infos-field"></span><span class="modal-infos-details-span" id="modal-infos-income"></span><span class="modal-infos-details-span" id="modal-infos-undergraduate"></span></div></div></div><div class="modal-content" id="modal-matchs"><div class="modal-content modal-content-2" id="modal-match"><span class="modal-title" id="modal-match-title">Match</span></div><div class="modal-content modal-content-2" id="modal-nomatch"><span class="modal-title" id="modal-nomatch-title">No Match</span></div></div><div class="modal-content" id="modal-graphic"><div id="modal-graphic-legend"><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'attr\', true);" onmouseout="highlightLine(\'attr\', false)"><span class="modal-graphic-legend-line" style="border-color: orange;"></span><span class="modal-graphic-legend-text">Attractive</span></div><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'sinc\', true);" onmouseout="highlightLine(\'sinc\', false)"><span class="modal-graphic-legend-line" style="border-color: red;"></span><span class="modal-graphic-legend-text">Sincere</span></div><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'intel\', true);" onmouseout="highlightLine(\'intel\', false)"><span class="modal-graphic-legend-line" style="border-color: green;"></span><span class="modal-graphic-legend-text">Intelligent</span></div><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'fun\', true);" onmouseout="highlightLine(\'fun\', false)"><span class="modal-graphic-legend-line" style="border-color: blue;"></span><span class="modal-graphic-legend-text">Fun</span></div><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'amb\', true);" onmouseout="highlightLine(\'amb\', false)"><span class="modal-graphic-legend-line" style="border-color: pink;"></span><span class="modal-graphic-legend-text">Ambitious</span></div><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'shar\', true);" onmouseout="highlightLine(\'shar\', false)"><span class="modal-graphic-legend-line" style="border-color: purple;"></span><span class="modal-graphic-legend-text">Shared Interests</span></div></div></div></div>'
+    modal.innerHTML = '<div class="modal-container"><div id="modal-close" onclick="closeModal()">X</div><div class="modal-content" id="modal-infos"><span class="modal-title" id="modal-infos-id"></span><div class="modal-content" id="modal-infos-details"><img id="modal-infos-img" src="media/man.svg" alt=""><div class="modal-content modal-content-2" id="modal-infos-details-text"><span class="modal-infos-details-span" id="modal-infos-age"></span><span class="modal-infos-details-span" id="modal-infos-from"></span><span class="modal-infos-details-span" id="modal-infos-race"></span><span class="modal-infos-details-span" id="modal-infos-field"></span><span class="modal-infos-details-span" id="modal-infos-income"></span><span class="modal-infos-details-span" id="modal-infos-undergraduate"></span></div></div></div><div class="modal-content" id="modal-matchs"><div class="modal-content modal-content-2" id="modal-match"><span class="modal-title" id="modal-match-title">Match</span></div><div class="modal-content modal-content-2" id="modal-nomatch"><span class="modal-title" id="modal-nomatch-title">No Match</span></div></div><div class="modal-content" id="modal-graphic"><div id="modal-graphic-legend"><span><em>Move over to see details</em></span><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'attr\', true);" onmouseout="highlightLine(\'attr\', false)"><span class="modal-graphic-legend-line" style="border-color: orange;"></span><span class="modal-graphic-legend-text">Attractive</span></div><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'sinc\', true);" onmouseout="highlightLine(\'sinc\', false)"><span class="modal-graphic-legend-line" style="border-color: red;"></span><span class="modal-graphic-legend-text">Sincere</span></div><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'intel\', true);" onmouseout="highlightLine(\'intel\', false)"><span class="modal-graphic-legend-line" style="border-color: green;"></span><span class="modal-graphic-legend-text">Intelligent</span></div><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'fun\', true);" onmouseout="highlightLine(\'fun\', false)"><span class="modal-graphic-legend-line" style="border-color: blue;"></span><span class="modal-graphic-legend-text">Fun</span></div><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'amb\', true);" onmouseout="highlightLine(\'amb\', false)"><span class="modal-graphic-legend-line" style="border-color: pink;"></span><span class="modal-graphic-legend-text">Ambitious</span></div><div class="modal-graphic-legend-item" onmouseover="highlightLine(\'shar\', true);" onmouseout="highlightLine(\'shar\', false)"><span class="modal-graphic-legend-line" style="border-color: purple;"></span><span class="modal-graphic-legend-text">Shared Interests</span></div></div></div></div>'
     modal.style.display = "none";
 }
 
@@ -648,22 +656,26 @@ function addModalGraph(l){
 
     var attr_before = {
         time:1,
-        mark:l.attr1_1
+        mark:l.attr1_1,
+        cat:"attr"
     };
 
     var attr_during = {
         time:2,
-        mark:l.attr1_s
+        mark:l.attr1_s,
+        cat:"attr"
     };
 
     var attr_oneday_after = {
         time:3,
-        mark:l.attr1_2
+        mark:l.attr1_2,
+        cat:"attr"
     };
 
     var attr_threeweeks_after = {
         time:4,
-        mark:l.attr1_3
+        mark:l.attr1_3,
+        cat:"attr"
     };
 
     attr = [attr_before, attr_during, attr_oneday_after, attr_threeweeks_after];
@@ -672,22 +684,26 @@ function addModalGraph(l){
 
     var sinc_before = {
         time:1,
-        mark:l.sinc1_1
+        mark:l.sinc1_1,
+        cat:"sinc"
     };
 
     var sinc_during = {
         time:2,
-        mark:l.sinc1_s
+        mark:l.sinc1_s,
+        cat:"sinc"
     };
 
     var sinc_oneday_after = {
         time:3,
-        mark:l.sinc1_2
+        mark:l.sinc1_2,
+        cat:"sinc"
     };
 
     var sinc_threeweeks_after = {
         time:4,
-        mark:l.sinc1_3
+        mark:l.sinc1_3,
+        cat:"sinc"
     };
 
     sinc = [sinc_before, sinc_during, sinc_oneday_after, sinc_threeweeks_after];
@@ -696,22 +712,26 @@ function addModalGraph(l){
 
     var intel_before = {
         time:1,
-        mark:l.intel1_1
+        mark:l.intel1_1,
+        cat:"intel"
     };
 
     var intel_during = {
         time:2,
-        mark:l.intel1_s
+        mark:l.intel1_s,
+        cat:"intel"
     };
 
     var intel_oneday_after = {
         time:3,
-        mark:l.intel1_2
+        mark:l.intel1_2,
+        cat:"intel"
     };
 
     var intel_threeweeks_after = {
         time:4,
-        mark:l.intel1_3
+        mark:l.intel1_3,
+        cat:"intel"
     };
 
     intel = [intel_before, intel_during, intel_oneday_after, intel_threeweeks_after];
@@ -720,44 +740,52 @@ function addModalGraph(l){
 
     var fun_before = {
         time:1,
-        mark:l.fun1_1
+        mark:l.fun1_1,
+        cat:"fun"
     };
 
     var fun_during = {
         time:2,
-        mark:l.fun1_s
+        mark:l.fun1_s,
+        cat:"fun"
     };
 
     var fun_oneday_after = {
         time:3,
-        mark:l.fun1_2
+        mark:l.fun1_2,
+        cat:"fun"
     };
 
     var fun_threeweeks_after = {
         time:4,
-        mark:l.fun1_3
+        mark:l.fun1_3,
+        cat:"fun"
     };
 
     fun = [fun_before, fun_during, fun_oneday_after, fun_threeweeks_after];
 
     var amb_before = {
         time:1,
-        mark:l.amb1_1
+        mark:l.amb1_1,
+        cat:"amb"
     };
 
     var amb_during = {
         time:2,
-        mark:l.amb1_s
+        mark:l.amb1_s,
+        cat:"amb"
     };
 
     var amb_oneday_after = {
         time:3,
-        mark:l.amb1_2
+        mark:l.amb1_2,
+        cat:"amb"
     };
 
     var amb_threeweeks_after = {
         time:4,
-        mark:l.amb1_3
+        mark:l.amb1_3,
+        cat:"amb"
     };
 
     amb = [amb_before, amb_during, amb_oneday_after, amb_threeweeks_after];
@@ -765,22 +793,26 @@ function addModalGraph(l){
 
     var shar_before = {
         time:1,
-        mark:l.shar1_1
+        mark:l.shar1_1,
+        cat:"shar"
     };
 
     var shar_during = {
         time:2,
-        mark:l.shar1_s
+        mark:l.shar1_s,
+        cat:"shar"
     };
 
     var shar_oneday_after = {
         time:3,
-        mark:l.shar1_2
+        mark:l.shar1_2,
+        cat:"shar"
     };
 
     var shar_threeweeks_after = {
         time:4,
-        mark:l.shar1_3
+        mark:l.shar1_3,
+        cat:"shar"
     };
 
     shar = [shar_before, shar_during, shar_oneday_after, shar_threeweeks_after];
@@ -793,23 +825,33 @@ function addModalGraph(l){
 
     var modal_y = d3.scaleLinear()
         .domain(d3.extent(data, (d)=>+d.mark))
-        .range([0, modal_h]);
+        .range([0, modal_h-20]);
     var modal_x = d3.scaleOrdinal()
         .domain([0,1,2,3,4,5])
         .range([0,step, 3*step, 5*step, 7*step, 8*step]);
-
-    modalSvg.selectAll("circle")
+    
+    var modal_graphic_g = modalSvg.selectAll("g")
         .data(data)
         .enter()
-        .append("circle")
-        .attr("class","dots")
-        .attr("cx", (d)=>modal_x(d.time))
-        .attr("cy", (d)=>modal_y(d.mark))
-        .attr("r", 2)
-        .attr("transform", "translate(10,10)");
+        .append("g")
+            .attr("class", (d) => "modal-graphic-g-" + d.cat);
 
-
-
+    modal_graphic_g.append("circle")
+                        .attr("class","modal-graphic-dots")
+                        .attr("cx", (d)=>modal_x(d.time))
+                        .attr("cy", (d)=>modal_y(d.mark))
+                        .attr("r", 2)
+                        .attr("transform", "translate(10,10)");
+    modal_graphic_g.append("text")
+                        .attr("class","modal-graphic-values")
+                        .attr("x", (d)=>modal_x(d.time))
+                        .attr("y", (d)=>modal_y(+d.mark))
+                        .attr("text-anchor", "middle")
+                        .text((d)=>(d.mark==="")? "no value" : d.mark)
+                        .attr("display", "none")
+                        .attr("font-size", "15")
+                        .attr("transform", "translate(10,25)");
+    
     var modal_xAxis = d3.axisTop(modal_x)
         .tickSize(10)
         .tickPadding(5)
@@ -893,6 +935,7 @@ function addModalGraph(l){
         .style("stroke", "purple")
         .style("stroke-width", 3)
         .attr("transform", "translate(10,10)");
+    
 }
 
 function highlightLine(lineName, active) {
@@ -900,11 +943,83 @@ function highlightLine(lineName, active) {
     if (active) {
         modalSvg.selectAll(".modal-graphic-line")
                 .attr("stroke-opacity", 0.1);
+        modalSvg.selectAll(".modal-graphic-dots")
+                    .attr("fill-opacity", 0.1)
         modalSvg.select("#modal-graphic-line-" + lineName)
                 .attr("stroke-opacity", 1);
+        modalSvg.selectAll(".modal-graphic-g-" + lineName)
+                    .selectAll(".modal-graphic-dots")
+                        .attr("fill-opacity", 1)
+        modalSvg.selectAll(".modal-graphic-g-" + lineName)
+                    .selectAll(".modal-graphic-values")
+                        .attr("display", "auto")
     }
     else {
         modalSvg.selectAll(".modal-graphic-line")
                 .attr("stroke-opacity", 1);
+        modalSvg.selectAll(".modal-graphic-dots")
+                .attr("fill-opacity", 1)
+        modalSvg.selectAll(".modal-graphic-values")
+                .attr("display", "none")
     }
+}
+
+function showTooltip(d) {
+    var tooltip = document.getElementById('tooltip');
+    tooltip.style.display = 'block';
+    tooltip.style.width = "100px"
+    document.getElementById("tooltip-content").innerHTML = d.iid;
+
+    /* Execute a function when someone moves the cursor over the image, or the tooltip: */
+    tooltip.addEventListener("mousemove", movetooltip);
+    canvas.addEventListener("mousemove", movetooltip);
+
+    /* And also for touch screens: */
+    tooltip.addEventListener("touchmove", movetooltip);
+    canvas.addEventListener("touchmove", movetooltip);
+
+    function movetooltip(e) {
+      var pos, x, y;
+
+      /* Prevent any other actions that may occur when moving over the image */
+      e.preventDefault();
+
+      /* Get the cursor's x and y positions: */
+      pos = getCursorPos(e);
+
+      /* Calculate the position of the tooltip: */
+      x = pos.x - (tooltip.offsetWidth / 2);
+      y = pos.y - (tooltip.offsetHeight / 2);
+
+    /* Set the position of the tooltip: */
+      /* Prevent the tooltip from being positioned outside the canvas: */
+      if (x > w - tooltip.offsetWidth) {
+          tooltip.style.left = x - parseFloat(tooltip.style.width)/2 - 20 + "px";
+        }
+      else {
+          tooltip.style.left = x + parseFloat(tooltip.style.width)/2 + 20 + "px";
+        }
+
+      tooltip.style.top = y + "px";
+    }
+    function getCursorPos(e) {
+        var a, x = 0, y = 0;
+        e = e || window.event;
+    
+        /* Get the x and y positions of the image: */
+        a = canvas.getBoundingClientRect();
+    
+        /* Calculate the cursor's x and y coordinates, relative to the image: */
+        x = e.pageX - a.left;
+        y = e.pageY - a.top;
+    
+        /* Consider any page scrolling: */
+        x = x - window.pageXOffset;
+        y = y - window.pageYOffset;
+        return {x : x, y : y};
+      }
+}
+function hideTooltip(){
+    var tooltip = document.getElementById('tooltip');
+    tooltip.style.display = 'none';
 }
