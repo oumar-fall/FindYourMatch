@@ -405,7 +405,7 @@ function visible(age,race,genre,study,d){
 
 function rayon(age,race, genre, study){
     if(genre == current_sexe) {
-        if (age<agemax && age>agemin && current_race==race && (parseInt(study) == parseInt(current_study) || all_study ==true)){
+        if (age<agemax && age>agemin && (current_race==race || all_race) && (parseInt(study) == parseInt(current_study) || all_study ==true)){
             return(5);
         }
     }
