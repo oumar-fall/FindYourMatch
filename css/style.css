@@ -8,6 +8,10 @@ body {
   font-size: 50px
 }
 
+#intro{
+  text-align: center;
+}
+
 #canvas {
     position: relative;
     border : solid black 2px;
