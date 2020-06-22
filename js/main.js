@@ -388,7 +388,7 @@ function drawFilter(){
 }
 function visible(age,race,genre,study,d){
     if(genre == current_sexe) {
-        if (age<agemax && age>agemin && current_race==race && (parseInt(study) == parseInt(current_study) || all_study ==true)){
+        if (age<agemax && age>agemin && (current_race==race || all_race) && (parseInt(study) == parseInt(current_study) || all_study ==true)){
             personnesress.push(d);
             return("visible");
         }
