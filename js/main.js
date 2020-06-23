@@ -11,7 +11,7 @@ var current_study = 1;
 var all_study = true;
 var all_race = true;
 var personnesress = [];
-let x, y, zoomState;
+let xA, yO, zoomState;
 let dataset = [], user_dataset = [];
 const races = [
     "Black/African American",
@@ -70,12 +70,6 @@ d3.csv("data/SpeedDating.csv")
         user_dataset = dataset.filter(
             (d, i, arr) => arr.findIndex(t => t.iid === d.iid) === i
           );
-        x = d3.scaleLinear()
-            .domain(d3.extent(rows, (row) => row.age))
-            .range([10, w-10]);
-        y = d3.scaleLinear()
-            .domain(d3.extent(rows, (row) => row.income))
-            .range([10, h-10]);
 
         NoCluster();
     });
@@ -162,32 +156,28 @@ function draw() {
 
     var xnom;
     var ynom;
-    var xA;
-    var yO;
     switch(valeurmodeO){
         case "income":
             yO = incomeO();
-            yaxis = d3.axisRight()
-            .scale(yO);
+            yAxis = d3.axisRight(yO);
             ynom = "Income (€)";
             break;
 
         case "race":
             yO = raceO();
-            yaxis = d3.axisRight()
-            .scale(yO);
+            yAxis = d3.axisRight(yO)
+                    .tickFormat((r) => races[r-1]);
             ynom = "Race";
             break;
         case "field_cd":
             yO = studyO();
-            yaxis = d3.axisRight()
-            .scale(yO);
+            yAxis = d3.axisRight(yO)
+              .tickFormat((f) => field[f-1]);
             ynom = "Field of study";
             break;
         case "age":
             yO = ageO();
-            yaxis = d3.axisRight()
-            .scale(yO);
+            yAxis = d3.axisRight(yO);
             ynom = "Age";
             break;
 }
@@ -195,26 +185,24 @@ function draw() {
 
         case "income":
             xA = incomeA();
-            xaxis = d3.axisBottom()
-            .scale(xA);
+            xAxis = d3.axisBottom(xA);
             xnom = "Income (€)";
             break;
         case "field_cd":
             xA = studyA();
-            xaxis = d3.axisBottom()
-            .scale(xA);
+            xAxis = d3.axisBottom(xA)
+             .tickFormat((f) => field[f-1]);
             xnom = "Field of study";
             break;
         case "age":
             xA = ageA();
-            xaxis = d3.axisBottom()
-            .scale(xA);
+            xAxis = d3.axisBottom(xA);
             xnom = "Age";
             break;
         case "race":
             xA = raceA();
-            xaxis = d3.axisBottom()
-            .scale(xA);
+            xAxis = d3.axisBottom(xA)
+                .tickFormat((r) => races[r-1]);
             xnom = "Race";
             break;
 
@@ -239,22 +227,19 @@ function draw() {
 
     svg.call(zoom)
 
-    xAxis = d3.axisBottom(x)
-            .ticks(10)
-            .tickSize(10)
-            .tickPadding(5);
-    yAxis = d3.axisRight(y)
-            .ticks(10)
-            .tickSize(10)
-            .tickPadding(5);
-
     gX = svg.append('g')
                 .attr("class", "x axis")
-                .call(xAxis)
+                .call(xAxis);
+    gX.selectAll("text")
+        .attr("transform", "rotate(15)")
+        .style("text-anchor", "start");
 
     gY = svg.append('g')
                 .attr("class", "y axis")
                 .call(yAxis);
+    gY.selectAll("text")
+        .attr("transform", "rotate(15)")
+        .style("text-anchor", "start");
 
     svg.append("text")
         .attr("class", "xlabel")
@@ -278,8 +263,15 @@ function zoomed(g){
     if (zoomState){
         g.attr("transform", zoomState);
 
-        gX.call(xAxis.scale(zoomState.rescaleX(x)));
-        gY.call(yAxis.scale(zoomState.rescaleY(y)));
+        gX.call(xAxis.scale(zoomState.rescaleX(xA)));
+        gY.call(yAxis.scale(zoomState.rescaleY(yO)));
+
+        gX.selectAll("text")
+            .attr("transform", "rotate(15)")
+            .style("text-anchor", "start");
+        gY.selectAll("text")
+            .attr("transform", "rotate(15)")
+            .style("text-anchor", "start");
     }
 }
 
@@ -379,11 +371,11 @@ function drawFilter(){
     divtext.appendChild(p);
     var div = document.createElement(div);
 
-    div.innerHTML = "Describe yourself : <div> <input type='range' list='tickmarks'id='age' name='age' min='18' max='55' oninput = 'ageMax(age.value)'> <label for='volume'>Age Max </label> <br> <br> </div> <div><input type='range' id='agem' name='agem' list='tickmarks2' min='18' max='55'  oninput = 'ageMin(agem.value)'> <label for='cowbell'>Age Min </label> <br> <br> </div> Sexe : <div><input type='radio' id='F' name='sexe' value='F' onclick='sexe(F.value)' checked><label for='F'> F</label></div> <div><input type='radio' id='M' name='sexe' value='M' onclick='sexe(M.value)'> <label for='M'>M</label></div> <br> <br> Race :<div><input type='radio' id='race1' name='race' value='1' onclick='race(race1.value)'checked><label for='race1'> Black/African American </label></div> <div><input type='radio' id='race2' name='race' value='2' onclick='race(race2.value)'><label for='race2'> European/Caucasian-American </label></div> <div><input type='radio' id='race3' name='race' value='3' onclick='race(race3.value)'checked ><label for='race3'> Latino/Hispanic American </label></div> <div><input type='radio' id='race4' name='race' value='4' onclick='race(race4.value)'checked><label for='race4'> Asian/Pacific Islander/Asian-American </label></div>  <div><input type='radio' id='race5' name='race' value='5'checked onclick='race(race5.value)'><label for='race5'> Native American </label></div>  <div><input type='radio' id='race6' name='race' value='6' onclick='race(race6.value)'checked><label for='race6'> Other </label></div> <div><input type='radio' id='race7' name='race' value='7' onclick='race(race7.value)'checked><label for='race7'> All </label></div> <br> <br> Field of Study :<div><input type='radio' id='study1' name='study' value='1' onclick='study(study1.value)'checked><label for='study1'> Law </label></div> <div><input type='radio' id='study2' name='study' value='2' onclick='study(study2.value)'><label for='study'> Math </label></div> <div><input type='radio' id='study3' name='study' value='3' onclick=study(study3.value)'checked ><label for='study3'> Social Science, Psycologist </label></div> <div><input type='radio' id='study4' name='study' value='4' onclick='study(study.value)'checked><label for='study4'> Medical science, Pharmaceuticals, and Bio Tech </label></div>  <div><input type='radio' id='study5' name='study' value='5'checked onclick='study(study5.value)'><label for='study5'> Engineering </label></div>  <div><input type='radio' id='study6' name='study' value='6' onclick='study(study6.value)'checked><label for='study6'> English/Creative Writing/Philosophy </label></div><div><input type='radio' id='study7' name='study' value='7' onclick='study(study7.value)'checked><label for='study7'> History/Religion/Philosophy </label></div> <div><input type='radio' id='study8' name='study' value='8' onclick='study(study8.value)'checked><label for='study8'> Business/Econ/Finance </label></div> <div><input type='radio' id='study9' name='study' value='9' onclick='study(study9.value)'checked><label for='study9'> Education, Academia </label></div> <div><input type='radio' id='study10' name='study' value='10' onclick='study(study10.value)'checked><label for='study10'> Biological siences/Chemistry/Physics </label></div> <div><input type='radio' id='study11' name='study' value='11' onclick='study(study11.value)'checked><label for='study11'> Social work </label></div> <div><input type='radio' id='study12' name='study' value='12' onclick='study(study12.value)'checked><label for='study12'> Undergrad/undecided </label></div>  <div><input type='radio' id='study13' name='study' value='13' onclick='study(study13.value)'checked><label for='study13'> Political science/International affairs </label></div> <div><input type='radio' id='study14' name='study' value='14' onclick='study(study14.value)'checked><label for='study14'>Film </label></div> <div><input type='radio' id='study15' name='study' value='15' onclick='study(study15.value)'checked><label for='study15'> Fine Arts/ Arts Adiministration </label></div> <div><input type='radio' id='study16' name='study' value='16' onclick='study(study16.value)'checked><label for='study16'> Languages </label></div> <div><input type='radio' id='study17' name='study' value='17' onclick='study(study17.value)'checked><label for='study17'> Architecture </label></div> <div><input type='radio' id='study18' name='study' value='18' onclick='study(study18.value)'checked><label for='study18'> Other </label></div> <div><input type='radio' id='study19' name='study' value='19' onclick='study(study19.value)'checked><label for='study19'> Show all </label></div> ";
-
-    div.innerHTML = "Décrivez vous : <div> <input type='range' value=55 list='tickmarks'id='age' name='age' min='18' max='55' oninput = 'ageMax(age.value);document.getElementById(\"agem\").max = age.value;'> <label for='volume'>Age Max </label> <br> <br> </div> <div><input type='range' id='agem' name='agem' value=18 list='tickmarks2' min='18' max='55'  oninput = 'ageMin(agem.value);document.getElementById(\"age\").min = agem.value;'> <label for='cowbell'>Age Min </label> <br> <br> </div> Sexe : <div><input type='radio' id='F' name='sexe' value='F' onclick='sexe(F.value)' checked><label for='F'> F</label></div> <div><input type='radio' id='M' name='sexe' value='M' onclick='sexe(M.value)'> <label for='M'>M</label></div> <br> <br> Race :<div><input type='radio' id='race1' name='race' value='1' onclick='race(race1.value)'checked><label for='race1'> Black/African American </label></div> <div><input type='radio' id='race2' name='race' value='2' onclick='race(race2.value)'><label for='race2'> European/Caucasian-American </label></div> <div><input type='radio' id='race3' name='race' value='3' onclick='race(race3.value)'checked ><label for='race3'> Latino/Hispanic American </label></div> <div><input type='radio' id='race4' name='race' value='4' onclick='race(race4.value)'checked><label for='race4'> Asian/Pacific Islander/Asian-American </label></div>  <div><input type='radio' id='race5' name='race' value='5'checked onclick='race(race5.value)'><label for='race5'> Native American </label></div>  <div><input type='radio' id='race6' name='race' value='6' onclick='race(race6.value)'checked><label for='race6'> Other </label></div> <div><input type='radio' id='race7' name='race' value='7' onclick='race(race7.value)'checked><label for='race7'> All </label></div> <br> <br> Field of Study :<div><input type='radio' id='study1' name='study' value='1' onclick='study(study1.value)'checked><label for='study1'> Law </label></div> <div><input type='radio' id='study2' name='study' value='2' onclick='study(study2.value)'><label for='study'> Math </label></div> <div><input type='radio' id='study3' name='study' value='3' onclick=study(study3.value)'checked ><label for='study3'> Social Science, Psycologist </label></div> <div><input type='radio' id='study4' name='study' value='4' onclick='study(study.value)'checked><label for='study4'> Medical science, Pharmaceuticals, and Bio Tech </label></div>  <div><input type='radio' id='study5' name='study' value='5'checked onclick='study(study5.value)'><label for='study5'> Engineering </label></div>  <div><input type='radio' id='study6' name='study' value='6' onclick='study(study6.value)'checked><label for='study6'> English/Creative Writing/Philosophy </label></div><div><input type='radio' id='study7' name='study' value='7' onclick='study(study7.value)'checked><label for='study7'> History/Religion/Philosophy </label></div> <div><input type='radio' id='study8' name='study' value='8' onclick='study(study8.value)'checked><label for='study8'> Business/Econ/Finance </label></div> <div><input type='radio' id='study9' name='study' value='9' onclick='study(study9.value)'checked><label for='study9'> Education, Academia </label></div> <div><input type='radio' id='study10' name='study' value='10' onclick='study(study10.value)'checked><label for='study10'> Biological siences/Chemistry/Physics </label></div> <div><input type='radio' id='study11' name='study' value='11' onclick='study(study11.value)'checked><label for='study11'> Social work </label></div> <div><input type='radio' id='study12' name='study' value='12' onclick='study(study12.value)'checked><label for='study12'> Undergrad/undecided </label></div>  <div><input type='radio' id='study13' name='study' value='13' onclick='study(study13.value)'checked><label for='study13'> Political science/International affairs </label></div> <div><input type='radio' id='study14' name='study' value='14' onclick='study(study14.value)'checked><label for='study14'>Film </label></div> <div><input type='radio' id='study15' name='study' value='15' onclick='study(study15.value)'checked><label for='study15'> Fine Arts/ Arts Adiministration </label></div> <div><input type='radio' id='study16' name='study' value='16' onclick='study(study16.value)'checked><label for='study16'> Languages </label></div> <div><input type='radio' id='study17' name='study' value='17' onclick='study(study17.value)'checked><label for='study17'> Architecture </label></div> <div><input type='radio' id='study18' name='study' value='18' onclick='study(study18.value)'checked><label for='study18'> Other </label></div> <div><input type='radio' id='study19' name='study' value='19' onclick='study(study19.value)'checked><label for='study19'> Show all </label></div> ";
+    div.innerHTML = "Décrivez vous : <div> <input type='range' value=55 list='tickmarks'id='age' name='age' min='18' max='55' oninput = 'ageMax(age.value);document.getElementById(\"agem\").max = age.value;'> <label for='volume'>Max age: <span id='age-max-value'>55</span></label> <br> <br> </div> <div><input type='range' id='agem' name='agem' value=18 list='tickmarks2' min='18' max='55'  oninput = 'ageMin(agem.value);document.getElementById(\"age\").min = agem.value;'> <label for='cowbell'>Min age : <span id='age-min-value'>18</span></label> <br> <br> </div> Sexe : <div><input type='radio' id='F' name='sexe' value='F' onclick='sexe(F.value)' checked><label for='F'> F</label></div> <div><input type='radio' id='M' name='sexe' value='M' onclick='sexe(M.value)'> <label for='M'>M</label></div> <br> <br> Race :<div><input type='radio' id='race1' name='race' value='1' onclick='race(race1.value)'checked><label for='race1'> Black/African American </label></div> <div><input type='radio' id='race2' name='race' value='2' onclick='race(race2.value)'><label for='race2'> European/Caucasian-American </label></div> <div><input type='radio' id='race3' name='race' value='3' onclick='race(race3.value)'checked ><label for='race3'> Latino/Hispanic American </label></div> <div><input type='radio' id='race4' name='race' value='4' onclick='race(race4.value)'checked><label for='race4'> Asian/Pacific Islander/Asian-American </label></div>  <div><input type='radio' id='race5' name='race' value='5'checked onclick='race(race5.value)'><label for='race5'> Native American </label></div>  <div><input type='radio' id='race6' name='race' value='6' onclick='race(race6.value)'checked><label for='race6'> Other </label></div> <div><input type='radio' id='race7' name='race' value='7' onclick='race(race7.value)'checked><label for='race7'> All </label></div> <br> <br> Field of Study :<div><input type='radio' id='study1' name='study' value='1' onclick='study(study1.value)'checked><label for='study1'> Law </label></div> <div><input type='radio' id='study2' name='study' value='2' onclick='study(study2.value)'><label for='study'> Math </label></div> <div><input type='radio' id='study3' name='study' value='3' onclick=study(study3.value)'checked ><label for='study3'> Social Science, Psycologist </label></div> <div><input type='radio' id='study4' name='study' value='4' onclick='study(study.value)'checked><label for='study4'> Medical science, Pharmaceuticals, and Bio Tech </label></div>  <div><input type='radio' id='study5' name='study' value='5'checked onclick='study(study5.value)'><label for='study5'> Engineering </label></div>  <div><input type='radio' id='study6' name='study' value='6' onclick='study(study6.value)'checked><label for='study6'> English/Creative Writing/Philosophy </label></div><div><input type='radio' id='study7' name='study' value='7' onclick='study(study7.value)'checked><label for='study7'> History/Religion/Philosophy </label></div> <div><input type='radio' id='study8' name='study' value='8' onclick='study(study8.value)'checked><label for='study8'> Business/Econ/Finance </label></div> <div><input type='radio' id='study9' name='study' value='9' onclick='study(study9.value)'checked><label for='study9'> Education, Academia </label></div> <div><input type='radio' id='study10' name='study' value='10' onclick='study(study10.value)'checked><label for='study10'> Biological siences/Chemistry/Physics </label></div> <div><input type='radio' id='study11' name='study' value='11' onclick='study(study11.value)'checked><label for='study11'> Social work </label></div> <div><input type='radio' id='study12' name='study' value='12' onclick='study(study12.value)'checked><label for='study12'> Undergrad/undecided </label></div>  <div><input type='radio' id='study13' name='study' value='13' onclick='study(study13.value)'checked><label for='study13'> Political science/International affairs </label></div> <div><input type='radio' id='study14' name='study' value='14' onclick='study(study14.value)'checked><label for='study14'>Film </label></div> <div><input type='radio' id='study15' name='study' value='15' onclick='study(study15.value)'checked><label for='study15'> Fine Arts/ Arts Adiministration </label></div> <div><input type='radio' id='study16' name='study' value='16' onclick='study(study16.value)'checked><label for='study16'> Languages </label></div> <div><input type='radio' id='study17' name='study' value='17' onclick='study(study17.value)'checked><label for='study17'> Architecture </label></div> <div><input type='radio' id='study18' name='study' value='18' onclick='study(study18.value)'checked><label for='study18'> Other </label></div> <div><input type='radio' id='study19' name='study' value='19' onclick='study(study19.value)'checked><label for='study19'> Show all </label></div> ";
 
     divtext.appendChild(div);
+
+    afficherFilter();
 
 }
 function visible(age,race,genre,study,d){
@@ -445,17 +437,18 @@ function afficherFilter(){
 }
 function ageMax(nom){
     agemax = parseInt(nom);
+    document.getElementById('age-max-value').innerText = agemax;
     afficherFilter();
   }
 
 function ageMin(nom){
     agemin = parseInt(nom);
+    document.getElementById('age-min-value').innerText = agemin;
     afficherFilter();
 }
 
 
 function NoCluster(){
-  var div = document.getElementById("textdiv");
   var myNode = document.getElementById("textdiv");
  while (myNode.firstChild) {
        myNode.removeChild(myNode.firstChild);
@@ -463,20 +456,17 @@ function NoCluster(){
 
 
 var divtext = document.getElementById("textdiv");
-var divgrosse = document.createElement("grossediv");
+var divgrosse = document.createElement("div");
+divgrosse.id = "main-inputs"
 var div1 = document.createElement("div");
 var div2 = document.createElement("div");
 div1.id = "left";
 div2.id = "center";
-div1.innerHTML="Select the abscissa : <div><input type='radio' id='income' name='abs' value='income' onclick='draw()' > <label for='income'>Income</label></div><div><input type='radio' id='age' name='abs' value='age' onclick='draw()' checked ><label for='age'> Age </label></div> <div><input type='radio' id='study' name='abs' value='field_cd' onclick='draw()'><label for='study'> <a href='#studyexpl'> Field of study </a> </label></div> <div><input type='radio' id='race' name='abs' value='race' onclick='draw()' ><label for='race'> <a href='#raceexpl'> Race </a> </label></div>";
-div2.innerHTML="Select the ordinate : <div><input type='radio' id='income' name='od' value='income' onclick='draw()' checked> <label for='income'>Income</label></div><div><input type='radio' id='age' name='od' value='age' onclick='draw()'><label for='age'> Age </label></div> <div><input type='radio' id='study' name='od' value='field_cd' onclick='draw()'><label for='study'> <a href='#studyexpl'> Field of study </a></label></div> <div><input type='radio' id='race' name='od' value='race' onclick='draw()'><label for='race'> <a href='#raceexpl'> Race </a> </label></div>";
+div1.innerHTML="Select the abscissa : <div><input type='radio' id='income' name='abs' value='income' onclick='draw()' > <label for='income'>Income</label></div><div><input type='radio' id='age' name='abs' value='age' onclick='draw()' checked ><label for='age'> Age </label></div> <div><input type='radio' id='study' name='abs' value='field_cd' onclick='draw()'><label for='study'>Field of study</label></div> <div><input type='radio' id='race' name='abs' value='race' onclick='draw()' ><label for='race'>Race</label></div>";
+div2.innerHTML="Select the ordinate : <div><input type='radio' id='income' name='od' value='income' onclick='draw()' checked> <label for='income'>Income</label></div><div><input type='radio' id='age' name='od' value='age' onclick='draw()'><label for='age'> Age </label></div> <div><input type='radio' id='study' name='od' value='field_cd' onclick='draw()'><label for='study'>Field of study</label></div> <div><input type='radio' id='race' name='od' value='race' onclick='draw()'><label for='race'>Race</label></div>";
 divgrosse.appendChild(div1);
 divgrosse.appendChild(div2);
 divtext.appendChild(divgrosse);
-var studyexpl = document.getElementById("studyexpl");
-studyexpl.innerHTML = "Here are the correspondences between the numbers and the fields of study <ul> <li> 1= Law</li>  <li>2= Math </li> <li>3= Social Science, Psychologist </li> <li> 4= Medical Science, Pharmaceuticals, and Bio Tech </li> <li> 5= Engineering </li> <li> 6= English/Creative Writing/ Journalism </li> <li> 7= History/Religion/Philosophy </li> <li> 8= Business/Econ/Finance </li> <li> 9= Education, Academia </li> <li>  10= Biological Sciences/Chemistry/Physics </li> <li> 11= Social Work </li> <li> 12= Undergrad/undecided </li> <li> 13=Political Science/International Affairs </li> <li> 14=Film </li> <li> 15=Fine Arts/Arts Administration </li> <li> 16=Languages </li> <li> 17=Architecture </li> <li> 18=Other </li> </ul>"
-var raceexpl =  document.getElementById("raceexpl");
-raceexpl.innerHTML = "Here are the correspondences between the numbers and the races <ul> <li> Black/African American=1 </li> <li> European/Caucasian-American=2 </li> <li> Latino/Hispanic American=3 </li> <li>Asian/Pacific Islander/Asian-American=4 </li> <li>Native American=5 </li> <li>Other=6 </li> </ul>"
 
 
   draw();
@@ -486,13 +476,7 @@ function Cluster(){
   console.log("cluster !");
   var div = document.getElementById("textdiv");
   var myNode = document.getElementById("textdiv");
- while (myNode.firstChild) {
-       myNode.removeChild(myNode.firstChild);
-}
-var studyexpl = document.getElementById("studyexpl");
-studyexpl.innerHTML = "";
-var raceexpl = document.getElementById("raceexpl");
-raceexpl.innerHTML = "";
+  myNode.innerHTML = '';
   drawCluster();
 }
 
@@ -588,19 +572,9 @@ function addModalInfos(d) {
 function Filter(){
     console.log("filter");
     var div = document.getElementById("textdiv");
-  var myNode = document.getElementById("textdiv");
- while (myNode.firstChild) {
-       myNode.removeChild(myNode.firstChild);
-}
-    var studyexpl = document.getElementById("studyexpl");
-    studyexpl.innerHTML = "";
-    var raceexpl = document.getElementById("raceexpl");
-    raceexpl.innerHTML = "";
-
-
-
+    var myNode = document.getElementById("textdiv");
+    myNode.innerHTML = '';
     drawFilter();
-
 }
 
 function sexe(nom){
@@ -641,7 +615,11 @@ function study(nom){
 
 function addModalGraph(l){
     var modalGraphic = document.getElementById("modal-graphic");
-
+    var modalGraphicTitle = document.createElement("span");
+    modalGraphicTitle.innerHTML = "What " + ((l.gender == 0)? "s" : '') + "he's looking for";
+    modalGraphicTitle.classList.add("modal-graphic-title");
+    modalGraphic.appendChild(modalGraphicTitle);
+ 
     var modalSvg = d3.select('#modal-graphic')
                         .append("svg")
                         .attr("id", "modal-graphic-svg");

@@ -212,6 +212,17 @@ body {
     height : 40%;
     min-height: 150px;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal-graphic-title {
+    text-transform: uppercase;
+    padding: 20px 0 10px 0;
+    width:80%;
+    text-align: center;
+    border-top: solid lightgray 1px;
 }
 
 #modal-graphic-svg {
@@ -282,19 +293,26 @@ path.plot {
 }
 
 #left {
-    position: relative;
-    float: left;
-    font-size: small;
+    font-size: 1em;
     line-height: 70%;
     margin-left: 0px;
-    size: 50%;
-    overflow-x: 0;
   }
   #center {
-    float: left;
-    font-size: small;
+    font-size: 1em;
     line-height: 70%;
     margin-left: 20px;
     margin-right: 20px;
     size: 50%;
+  }
+
+  #main-inputs {
+      margin : 20px;
+      display: flex;
+
+  }
+
+  .main-button {
+      margin : 20px;
+      font-size : 1.3em;
+      padding : 2px 5px;
   }
